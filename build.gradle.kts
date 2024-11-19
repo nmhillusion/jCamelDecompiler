@@ -13,6 +13,7 @@ repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     google()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -21,6 +22,7 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+    implementation("com.github.nmhillusion:n2mix-java:2024.9.3")
 }
 
 compose.desktop {

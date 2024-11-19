@@ -1,31 +1,76 @@
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.awt.SwingPanel
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toPainter
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.singleWindowApplication
+import serviceImpl.FileServiceImpl
+import java.nio.file.Files
+import java.nio.file.Paths
+import javax.imageio.ImageIO
+import javax.swing.BoxLayout
+import javax.swing.JButton
+import javax.swing.JPanel
+import javax.swing.JTextField
 
 @Composable
-@Preview
-fun App() {
+fun App(window_: ComposeWindow) {
+    val fileService by remember { mutableStateOf(FileServiceImpl()) }
     var text by remember { mutableStateOf("Hello, World!") }
 
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
+//    MaterialTheme {
+//        Column(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
+//            Button(onClick = {
+//            }) {
+//                Text(text)
+//            }
+//            TextField(value = text, onValueChange = { text = it })
+//        }
+//    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+        ) {
+            SwingPanel(
+                background = Color.White,
+                modifier = Modifier.fillMaxSize(),
+                factory = {
+                    JPanel().apply {
+                        layout = BoxLayout(this, BoxLayout.Y_AXIS)
+                        add(
+                            JTextField(text)
+                        )
+                        add(
+                            JButton("Click here").apply {
+                                setSize(200, 30)
+                                addActionListener {
+                                    text = fileService.chooseBasePath(window_)?.toString() ?: "No path selected"
+                                }
+                            }
+                        )
+                    }
+                }
+            )
         }
     }
 }
 
-fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
-        App()
-    }
+fun main() = singleWindowApplication(
+    title = "jCamelDecoder",
+    icon = ImageIO
+        .read(Files.newInputStream(Paths.get("D:\\photos\\icons\\git.png")))
+        .toPainter()
+) {
+    App(this.window)
 }
