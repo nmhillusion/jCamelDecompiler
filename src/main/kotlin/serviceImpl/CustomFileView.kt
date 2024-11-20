@@ -9,8 +9,7 @@ import javax.swing.filechooser.FileView
 
 /**
  * created by: nmhillusion
- *
- *
+ * <p>
  * created date: 2024-11-20
  */
 class CustomFileView : FileView() {

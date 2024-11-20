@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities
  * created date: 2024-11-19
  */
 class FileServiceImpl : FileService {
-    override fun chooseBasePath(parent: java.awt.Component): Path? {
+    override fun chooseBasePath(parent: java.awt.Component, onSelectDirectory: (Path) -> Unit) {
         SwingUtilities.invokeLater {
             val fileChooser = JFileChooser()
             fileChooser.isMultiSelectionEnabled = false
@@ -21,22 +21,15 @@ class FileServiceImpl : FileService {
             fileChooser.fileView = CustomFileView()
 //            fileChooser.updateUI()
 
-            val dialogResult = fileChooser.showOpenDialog(null)
+            val dialogResult = fileChooser.showOpenDialog(parent)
 
             if (dialogResult == JFileChooser.APPROVE_OPTION) {
                 val chosenPath = fileChooser.selectedFile.toPath()
 
                 LogHelper.getLogger(this).info("Chosen path: {}", chosenPath)
+
+                onSelectDirectory(chosenPath)
             }
         }
-
-//        val frame = Frame()
-//        val fileDialog = FileDialog(frame, "Select directory", FileDialog.LOAD)
-//
-//        fileDialog.isMultipleMode = false
-//        fileDialog.file = ""
-//        fileDialog.isVisible = true
-
-        return null
     }
 }
