@@ -4,6 +4,7 @@ import service.FileService
 import tech.nmhillusion.n2mix.helper.log.LogHelper
 import java.nio.file.Path
 import javax.swing.JFileChooser
+import javax.swing.SwingUtilities
 
 /**
  * created by: nmhillusion
@@ -12,22 +13,29 @@ import javax.swing.JFileChooser
  */
 class FileServiceImpl : FileService {
     override fun chooseBasePath(parent: java.awt.Component): Path? {
-        val fileChooser = JFileChooser()
-        fileChooser.isMultiSelectionEnabled = false
-        fileChooser.setBounds(0, 0, 800, 600)
-        fileChooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
-        fileChooser.fileView = fileChooser.fileView
-        fileChooser.updateUI()
+        SwingUtilities.invokeLater {
+            val fileChooser = JFileChooser()
+            fileChooser.isMultiSelectionEnabled = false
+            fileChooser.setBounds(0, 0, 800, 600)
+            fileChooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+            fileChooser.fileView = CustomFileView()
+//            fileChooser.updateUI()
 
-        val dialogResult = fileChooser.showOpenDialog(parent)
+            val dialogResult = fileChooser.showOpenDialog(null)
 
-        if (dialogResult == JFileChooser.APPROVE_OPTION) {
-            val chosenPath = fileChooser.selectedFile.toPath()
+            if (dialogResult == JFileChooser.APPROVE_OPTION) {
+                val chosenPath = fileChooser.selectedFile.toPath()
 
-            LogHelper.getLogger(this).info("Chosen path: {}", chosenPath)
-
-            return chosenPath
+                LogHelper.getLogger(this).info("Chosen path: {}", chosenPath)
+            }
         }
+
+//        val frame = Frame()
+//        val fileDialog = FileDialog(frame, "Select directory", FileDialog.LOAD)
+//
+//        fileDialog.isMultipleMode = false
+//        fileDialog.file = ""
+//        fileDialog.isVisible = true
 
         return null
     }

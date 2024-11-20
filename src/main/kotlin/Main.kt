@@ -11,9 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.singleWindowApplication
+import constant.IconPath
 import serviceImpl.FileServiceImpl
 import java.nio.file.Files
-import java.nio.file.Paths
 import javax.imageio.ImageIO
 import javax.swing.BoxLayout
 import javax.swing.JButton
@@ -66,11 +66,13 @@ fun App(window_: ComposeWindow) {
     }
 }
 
-fun main() = singleWindowApplication(
-    title = "jCamelDecoder",
-    icon = ImageIO
-        .read(Files.newInputStream(Paths.get("D:\\photos\\icons\\git.png")))
-        .toPainter()
-) {
-    App(this.window)
+fun main() {
+    singleWindowApplication(
+        title = "jCamelDecoder",
+        icon = ImageIO
+            .read(Files.newInputStream(IconPath.defaultIcon))
+            .toPainter()
+    ) {
+        App(this.window)
+    }
 }
