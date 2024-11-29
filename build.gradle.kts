@@ -4,8 +4,8 @@ plugins {
     id("distribution")
 }
 
-group = "tech.nmhillusion"
-version = "1.0-SNAPSHOT"
+group = "tech.nmhillusion.jCamelDecoderApp"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -21,12 +21,12 @@ tasks.test {
 }
 
 application {
-    mainClass = "tech.nmhillusion.Main"
+    mainClass = "tech.nmhillusion.jCamelDecoderApp.Main"
 }
 
 distributions {
     main {
-        distributionBaseName = "jCamelApp"
+        distributionBaseName = "jCamelDecoderApp"
         contents {
             from("src/main/resources")
         }
