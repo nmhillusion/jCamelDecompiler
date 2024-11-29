@@ -9,9 +9,11 @@ version = "1.0"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
+    implementation("com.github.nmhillusion:n2mix-java:2024.9.3")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
