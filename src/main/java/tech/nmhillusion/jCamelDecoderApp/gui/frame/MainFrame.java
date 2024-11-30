@@ -38,14 +38,7 @@ public class MainFrame extends JRootPane {
 
 
         {
-            gbc.gridx = 0;
-            gbc.gridy = rowIdx++;
-            gbc.gridwidth = 3;
-            gbc.gridheight = 1;
-            gbc.insets = new Insets(0, 0, 0, 0);
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.anchor = GridBagConstraints.LINE_START;
-            panel.add(createInputDecodeFolder(), gbc);
+            createInputDecodeFolder(panel, rowIdx++);
         }
 
         {
@@ -99,17 +92,28 @@ public class MainFrame extends JRootPane {
         return decodeButton;
     }
 
-    private JPanel createInputDecodeFolder() {
-        final JPanel panel_ = new JPanel();
-        panel_.setLayout(new FlowLayout());
-        panel_.add(new JLabel("Folder to decode"));
+    private void createInputDecodeFolder(JPanel parentPanel, int rowIdx) {
+        final GridBagConstraints gbc = new GridBagConstraints();
+        {
+            gbc.gridy = rowIdx;
+            gbc.gridwidth = 3;
+            gbc.gridheight = 1;
+            gbc.insets = new Insets(0, 0, 0, 0);
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.anchor = GridBagConstraints.LINE_START;
+        }
+
+        gbc.gridx = 0;
+        parentPanel.add(new JLabel("Folder to decode"), gbc);
 
         final JTextField inputField = new JTextField();
         inputField.setPreferredSize(new Dimension(200, 20));
         inputField.setSize(new Dimension(200, 20));
         inputField.setMaximumSize(new Dimension(200, 20));
         inputField.setEnabled(false);
-        panel_.add(inputField);
+
+        gbc.gridx = 1;
+        parentPanel.add(inputField, gbc);
 
         final JButton browseButton = new JButton("Browse");
         browseButton.addActionListener(e -> {
@@ -118,9 +122,9 @@ public class MainFrame extends JRootPane {
             fileChooser.setFileView(new CustomFileView());
             fileChooser.showOpenDialog(null);
         });
-        panel_.add(browseButton);
 
-        return panel_;
+        gbc.gridx = 2;
+        parentPanel.add(browseButton, gbc);
     }
 
     private JPanel createDecoderSelectionPanel() {
