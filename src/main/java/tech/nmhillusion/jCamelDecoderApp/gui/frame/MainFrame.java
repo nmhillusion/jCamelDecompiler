@@ -42,25 +42,24 @@ public class MainFrame extends JRootPane {
         }
 
         {
-            gbc.gridx = 0;
-            gbc.gridy = rowIdx++;
-            gbc.gridwidth = 3;
-            gbc.gridheight = 1;
-            gbc.insets = new Insets(0, 0, 0, 0);
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.anchor = GridBagConstraints.LINE_START;
-            panel.add(createDecoderSelectionPanel(), gbc);
+            createDecoderSelectionPanel(panel, rowIdx++);
         }
 
         {
+            createFilterPanel(panel, rowIdx++);
+        }
+
+        {
+            final JSeparator seperator_ = new JSeparator(JSeparator.HORIZONTAL);
+
             gbc.gridx = 0;
             gbc.gridy = rowIdx++;
             gbc.gridwidth = 3;
             gbc.gridheight = 1;
-            gbc.insets = new Insets(0, 0, 0, 0);
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.anchor = GridBagConstraints.LINE_START;
-            panel.add(createFilterPanel(), gbc);
+            gbc.insets = new Insets(8, 0, 8, 0);
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.anchor = GridBagConstraints.CENTER;
+            panel.add(seperator_, gbc);
         }
 
         {
@@ -96,7 +95,7 @@ public class MainFrame extends JRootPane {
         final GridBagConstraints gbc = new GridBagConstraints();
         {
             gbc.gridy = rowIdx;
-            gbc.gridwidth = 3;
+            gbc.gridwidth = 1;
             gbc.gridheight = 1;
             gbc.insets = new Insets(0, 0, 0, 0);
             gbc.fill = GridBagConstraints.NONE;
@@ -104,7 +103,7 @@ public class MainFrame extends JRootPane {
         }
 
         gbc.gridx = 0;
-        parentPanel.add(new JLabel("Folder to decode"), gbc);
+        parentPanel.add(new JLabel("Folder to decode: "), gbc);
 
         final JTextField inputField = new JTextField();
         inputField.setPreferredSize(new Dimension(200, 20));
@@ -127,42 +126,56 @@ public class MainFrame extends JRootPane {
         parentPanel.add(browseButton, gbc);
     }
 
-    private JPanel createDecoderSelectionPanel() {
-        final JPanel panel_ = new JPanel();
-        panel_.setLayout(new FlowLayout());
+    private void createDecoderSelectionPanel(JPanel panel, int rowIdx) {
+        final GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridy = rowIdx;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.LINE_START;
 
-        panel_.add(new JLabel("Decoder:"));
+        gbc.gridx = 0;
+        panel.add(new JLabel("Decoder:"), gbc);
 
         final JComboBox<String> comboBox = new JComboBox<>();
         comboBox.addItem("JavaP Decoder");
         comboBox.addItem("JD");
         comboBox.addItem("Proryon Decoder");
-        panel_.add(comboBox);
-
-        return panel_;
+        gbc.gridx = 1;
+        panel.add(comboBox, gbc);
     }
 
-    private JPanel createFilterPanel() {
-        final JPanel panel_ = new JPanel();
-        panel_.setLayout(new FlowLayout());
+    private void createFilterPanel(JPanel panel, int rowIdx) {
+        final GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridy = rowIdx;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.LINE_START;
 
         final JCheckBox isFilterCheckBox = new JCheckBox("Is Filtered by File List");
-        panel_.add(isFilterCheckBox);
 
-        panel_.add(new JLabel("Filter:"));
+        gbc.gridx = 0;
+        panel.add(isFilterCheckBox, gbc);
 
         final JTextField filterField = new JTextField();
         filterField.setPreferredSize(new Dimension(200, 20));
         filterField.setSize(new Dimension(200, 20));
         filterField.setMaximumSize(new Dimension(200, 20));
-        panel_.add(filterField);
+        filterField.setToolTipText("A text file contains list of paths to filter, separated by new line");
+        filterField.setEnabled(false);
+
+        gbc.gridx = 1;
+        panel.add(filterField, gbc);
 
         final JButton browseButton = new JButton("Browse");
         browseButton.addActionListener(e -> {
             /// Mark: Open file dialog
         });
-        panel_.add(browseButton);
 
-        return panel_;
+        gbc.gridx = 2;
+        panel.add(browseButton, gbc);
     }
 }
