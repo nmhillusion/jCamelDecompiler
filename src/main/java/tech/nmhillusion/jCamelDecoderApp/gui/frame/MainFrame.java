@@ -267,6 +267,10 @@ public class MainFrame extends JRootPane {
 
                     onDoneDecompilation(outputFolder);
                 } catch (IOException | InterruptedException | InvocationTargetException ex) {
+                    try {
+                        doLogMessageUI(LogType.ERROR, "Error when decompile [%s]: %s".formatted(ex.getClass().getSimpleName(), ex.getMessage()));
+                    } catch (InterruptedException | InvocationTargetException ignored) {
+                    }
                     throw new RuntimeException(ex);
                 }
             });
@@ -316,11 +320,12 @@ public class MainFrame extends JRootPane {
 
         {
             /// TODO: 2025-03-15 TESTING
+            final String classTestPath = "C:\\Users\\nmhil\\OneDrive\\Desktop\\tmp\\test-decoder\\classes";
             inputField.setText(
-                    "C:\\Users\\minguy1\\OneDrive - Chubb\\Desktop\\tmp\\ams-internal-ws\\WEB-INF\\classes"
+                    classTestPath
             );
             executionState.setDecodeFolderPath(
-                    Paths.get("C:\\Users\\minguy1\\OneDrive - Chubb\\Desktop\\tmp\\ams-internal-ws\\WEB-INF\\classes")
+                    Paths.get(classTestPath)
             );
         }
 
@@ -370,11 +375,12 @@ public class MainFrame extends JRootPane {
 
         {
             /// TODO: 2025-03-15 TESTING
+            final String outJavaTestPath = "C:\\Users\\nmhil\\OneDrive\\Desktop\\tmp\\test-decoder\\outJava";
             inputField.setText(
-                    "C:\\Users\\minguy1\\OneDrive - Chubb\\Desktop\\tmp\\out"
+                    outJavaTestPath
             );
             executionState.setOutputFolder(
-                    Paths.get("C:\\Users\\minguy1\\OneDrive - Chubb\\Desktop\\tmp\\out")
+                    Paths.get(outJavaTestPath)
             );
         }
 
