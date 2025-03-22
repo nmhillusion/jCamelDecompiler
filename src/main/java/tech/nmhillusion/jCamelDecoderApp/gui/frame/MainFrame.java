@@ -57,14 +57,20 @@ public class MainFrame extends JRootPane {
 
         {
             final JLabel titleLabel = new JLabel("jCamelDecoderApp");
-            titleLabel.setFont(new Font("Calibri", Font.PLAIN, 24));
+            titleLabel.setFont(new Font("Calibri", Font.PLAIN, 25));
+            titleLabel.setBorder(
+                    BorderFactory.createMatteBorder(
+                            0, 0, 5, 0
+                            , Color.GREEN
+                    )
+            );
 
             gbc.gridx = 0;
             gbc.gridy = rowIdx++;
             gbc.gridwidth = GridBagConstraints.REMAINDER;
             gbc.gridheight = 1;
             gbc.insets = new Insets(2, 2, 2, 2);
-            gbc.fill = GridBagConstraints.BOTH;
+            gbc.fill = GridBagConstraints.CENTER;
             panel.add(titleLabel, gbc);
         }
 
