@@ -16,9 +16,39 @@ import java.io.InputStream;
 public class CustomFileView extends FileView {
 
     private static ImageIcon FOLDER_ICON;
+    private static ImageIcon FILE_ICON;
 
     @Override
     public Icon getIcon(File f) {
+        if (f.isDirectory()) {
+            return getFolderIcon();
+        } else {
+            return getFileIcon();
+        }
+    }
+
+    private Icon getFileIcon() {
+        if (null != FILE_ICON) {
+            return FILE_ICON;
+        }
+
+        try (final InputStream folderIcon = getClass().getClassLoader().getResourceAsStream("icon/file.png")) {
+            if (null == folderIcon) {
+                throw new FileNotFoundException("File not found: icon/file.png");
+            }
+
+            final ImageIcon imageIcon = new ImageIcon(folderIcon.readAllBytes());
+            imageIcon.setImage(imageIcon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+
+            FILE_ICON = imageIcon;
+
+            return FILE_ICON;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Icon getFolderIcon() {
         if (null != FOLDER_ICON) {
             return FOLDER_ICON;
         }
@@ -38,4 +68,6 @@ public class CustomFileView extends FileView {
             throw new RuntimeException(e);
         }
     }
+
+
 }

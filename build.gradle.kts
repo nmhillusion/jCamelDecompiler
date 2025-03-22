@@ -14,6 +14,9 @@ repositories {
 
 dependencies {
     implementation("com.github.nmhillusion:n2mix-java:2024.9.3")
+    // https://mvnrepository.com/artifact/org.yaml/snakeyaml
+    implementation("org.yaml:snakeyaml:2.4")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }

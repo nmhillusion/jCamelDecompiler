@@ -1,11 +1,8 @@
 package tech.nmhillusion.jCamelDecoderApp;
 
-import tech.nmhillusion.jCamelDecoderApp.gui.CustomFileView;
 import tech.nmhillusion.jCamelDecoderApp.gui.frame.MainFrame;
-import tech.nmhillusion.n2mix.helper.log.LogHelper;
 
 import javax.swing.*;
-import java.awt.*;
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 
@@ -34,14 +31,15 @@ public class Main {
     private static void testGUI() {
         final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(1000, 800);
         frame.setTitle("jCamelDecoderApp");
 
         frame.setContentPane(
                 new MainFrame()
         );
 
-        frame.pack();
+//        frame.pack();
+        frame.revalidate();
         frame.setFocusable(true);
         frame.requestFocusInWindow();
         frame.setVisible(true);
