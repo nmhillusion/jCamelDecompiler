@@ -360,6 +360,10 @@ public class MainFrame extends JRootPane {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileChooser.setFileView(new CustomFileView());
+            setCurrentDirectoryOfFileChooser(
+                    fileChooser
+                    , executionState.getDecodeFolderPath()
+            );
             final int resultCode = fileChooser.showOpenDialog(null);
 
             if (JFileChooser.APPROVE_OPTION == resultCode) {
@@ -379,6 +383,14 @@ public class MainFrame extends JRootPane {
         panel.add(browseButton, gbc);
 
         return panel;
+    }
+
+    private void setCurrentDirectoryOfFileChooser(JFileChooser fileChooser, Path folderPath) {
+        if (null != folderPath) {
+            fileChooser.setCurrentDirectory(
+                    folderPath.toFile()
+            );
+        }
     }
 
     private JPanel createOutputDecodeFolder() {
@@ -425,6 +437,10 @@ public class MainFrame extends JRootPane {
         browseButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            setCurrentDirectoryOfFileChooser(
+                    fileChooser
+                    , executionState.getOutputFolder()
+            );
             fileChooser.setFileView(new CustomFileView());
             final int resultCode = fileChooser.showOpenDialog(null);
 
