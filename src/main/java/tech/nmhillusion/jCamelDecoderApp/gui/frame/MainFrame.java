@@ -13,6 +13,7 @@ import tech.nmhillusion.n2mix.type.ChainMap;
 import tech.nmhillusion.n2mix.util.StringUtil;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ItemEvent;
@@ -555,6 +556,15 @@ public class MainFrame extends JRootPane {
             final JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileChooser.setFileView(new CustomFileView());
+            setCurrentDirectoryOfFileChooser(
+                    fileChooser
+                    , executionState.getFilteredFilePath()
+            );
+            fileChooser.setFileFilter(new FileNameExtensionFilter(
+                            "Text files (split by new line)", "txt"
+                    )
+            );
+
             final int resultCode = fileChooser.showOpenDialog(null);
 
             if (JFileChooser.APPROVE_OPTION == resultCode) {
