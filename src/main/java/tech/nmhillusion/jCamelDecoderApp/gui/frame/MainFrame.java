@@ -70,8 +70,18 @@ public class MainFrame extends JRootPane {
 
 
         {
-            createInputDecodeFolder(panel, rowIdx++);
-            createOutputDecodeFolder(panel, rowIdx++);
+            gbc.gridx = 0;
+            gbc.gridy = rowIdx++;
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.gridheight = 1;
+            gbc.insets = new Insets(2, 2, 2, 2);
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weighty = 0.0;
+            gbc.weightx = 1.0;
+            panel.add(createInputDecodeFolder(), gbc);
+
+            gbc.gridy = rowIdx++;
+            panel.add(createOutputDecodeFolder(), gbc);
         }
 
         {
@@ -298,19 +308,24 @@ public class MainFrame extends JRootPane {
         }
     }
 
-    private void createInputDecodeFolder(JPanel parentPanel, int rowIdx) {
+    private JPanel createInputDecodeFolder() {
+        final JPanel panel = new JPanel(new GridBagLayout());
+        final int rowIdx = 0;
+
         final GridBagConstraints gbc = new GridBagConstraints();
         {
             gbc.gridy = rowIdx;
-            gbc.gridwidth = 1;
             gbc.gridheight = 1;
+            gbc.weighty = 0.0;
             gbc.insets = new Insets(0, 0, 0, 0);
-            gbc.fill = GridBagConstraints.NONE;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.LINE_START;
         }
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
         gbc.gridx = 0;
-        parentPanel.add(new JLabel("Folder to decode: "), gbc);
+        panel.add(new JLabel("Folder to decode: "), gbc);
 
         final JTextField inputField = new JTextField();
 //        inputField.setPreferredSize(new Dimension(200, 20));
@@ -329,8 +344,10 @@ public class MainFrame extends JRootPane {
             );
         }
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 1.0;
         gbc.gridx = 1;
-        parentPanel.add(inputField, gbc);
+        panel.add(inputField, gbc);
 
         final JButton browseButton = new JButton("Browse");
         browseButton.addActionListener(e -> {
@@ -350,23 +367,32 @@ public class MainFrame extends JRootPane {
             );
         });
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
         gbc.gridx = 2;
-        parentPanel.add(browseButton, gbc);
+        panel.add(browseButton, gbc);
+
+        return panel;
     }
 
-    private void createOutputDecodeFolder(JPanel parentPanel, int rowIdx) {
+    private JPanel createOutputDecodeFolder() {
+        final JPanel panel = new JPanel(new GridBagLayout());
+        final int rowIdx = 0;
+
         final GridBagConstraints gbc = new GridBagConstraints();
         {
             gbc.gridy = rowIdx;
-            gbc.gridwidth = 1;
             gbc.gridheight = 1;
+            gbc.weighty = 0.0;
             gbc.insets = new Insets(0, 0, 0, 0);
-            gbc.fill = GridBagConstraints.NONE;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.LINE_START;
         }
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
         gbc.gridx = 0;
-        parentPanel.add(new JLabel("Output folder: "), gbc);
+        panel.add(new JLabel("Output folder: "), gbc);
 
         final JTextField inputField = new JTextField();
         inputField.setSize(new Dimension(200, 20));
@@ -384,8 +410,10 @@ public class MainFrame extends JRootPane {
             );
         }
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 1.0;
         gbc.gridx = 1;
-        parentPanel.add(inputField, gbc);
+        panel.add(inputField, gbc);
 
         final JButton browseButton = new JButton("Browse");
         browseButton.addActionListener(e -> {
@@ -405,8 +433,12 @@ public class MainFrame extends JRootPane {
             );
         });
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
         gbc.gridx = 2;
-        parentPanel.add(browseButton, gbc);
+        panel.add(browseButton, gbc);
+
+        return panel;
     }
 
     private void createDecoderSelectionPanel(JPanel panel, int rowIdx) {
