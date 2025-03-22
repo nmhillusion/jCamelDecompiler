@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
@@ -99,7 +100,7 @@ public class DecoderEngine {
         final Path outputFolder = executionState.getOutputFolder();
 
         final List<Path> allPaths = traversalPaths(executionState.getDecodeFolderPath());
-        final List<DecompileFileModel> decompileFileList = new ArrayList<>();
+        final List<DecompileFileModel> decompileFileOriginalList = new ArrayList<>();
 
         for (var path_ : allPaths) {
 //            LogHelper.getLogger(this).info("item path: {}", path_.toString().replace("\\", "/"));
@@ -113,7 +114,7 @@ public class DecoderEngine {
                         .orElse("")
                         .endsWith("class")
                 ) {
-                    decompileFileList
+                    decompileFileOriginalList
                             .add(new DecompileFileModel()
                                     .setClassFilePath(path_)
                                     .setOutputFilePath(getOutputFilePath(path_, outputFolder))
@@ -121,6 +122,10 @@ public class DecoderEngine {
                 }
             }
         }
+
+        final List<DecompileFileModel> decompileFileList = doFilterFileByFiltedList(
+                decompileFileOriginalList
+        );
 
         final BaseDecompilerExecutor baseDecompilerExecutor = new BaseDecompilerExecutor(
                 decoderEngineModel
@@ -165,6 +170,32 @@ public class DecoderEngine {
         }
 
         return outputFolder;
+    }
+
+    private List<DecompileFileModel> doFilterFileByFiltedList(List<DecompileFileModel> decompileFileOriginalList) throws IOException {
+        if (!executionState.getIsOnlyFilteredFiles()) {
+            return decompileFileOriginalList;
+        }
+
+        if (null == executionState.getFilteredFilePath()) {
+            throw new IllegalArgumentException("Filtered file path is null");
+        }
+
+        final List<String> allLines = Files.readAllLines(executionState.getFilteredFilePath())
+                .stream()
+                .filter(Predicate.not(String::isBlank))
+                .map(StringUtil::trimWithNull)
+                .map(it -> it.replace("\\.(class|java)$", ""))
+                .toList();
+
+        return decompileFileOriginalList
+                .stream()
+                .filter(decompileFileModel -> {
+                    final Path classFilePath = decompileFileModel.getClassFilePath();
+                    final String pathWithoutExt = StringUtil.trimWithNull(classFilePath).replace("\\.(class|java)$", "");
+                    return (allLines.stream().anyMatch(pathWithoutExt::endsWith));
+                })
+                .toList();
     }
 
     private Path getOutputFilePath(Path itemAbsolutePath, Path outputDirPath) {
