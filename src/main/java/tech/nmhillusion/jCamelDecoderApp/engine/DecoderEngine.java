@@ -191,14 +191,14 @@ public class DecoderEngine {
                 .stream()
                 .filter(Predicate.not(String::isBlank))
                 .map(StringUtil::trimWithNull)
-                .map(it -> it.replace("\\.(class|java)$", ""))
+                .map(it -> it.replaceFirst("\\.(class|java)$", ""))
                 .toList();
 
         return decompileFileOriginalList
                 .stream()
                 .filter(decompileFileModel -> {
                     final Path classFilePath = decompileFileModel.getClassFilePath();
-                    final String pathWithoutExt = StringUtil.trimWithNull(classFilePath).replace("\\.(class|java)$", "");
+                    final String pathWithoutExt = StringUtil.trimWithNull(classFilePath).replaceFirst("\\.(class|java)$", "");
                     return (allLines.stream().anyMatch(pathWithoutExt::endsWith));
                 })
                 .toList();
