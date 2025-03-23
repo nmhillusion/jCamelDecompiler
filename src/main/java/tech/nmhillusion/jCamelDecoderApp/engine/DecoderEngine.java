@@ -135,6 +135,12 @@ public class DecoderEngine {
                         String.valueOf(decompileFileCount))
         );
 
+        doLogMessage(progressStatusUpdatableHandler
+                , LogType.WARN
+                , "Cleaning output folder"
+        );
+        this.deleteFolderRecursive(executionState.getOutputFolder());
+
         for (int fileIdx = 0; fileIdx < decompileFileCount; fileIdx++) {
             var decompileItem = decompileFileList.get(fileIdx);
 
@@ -178,6 +184,22 @@ public class DecoderEngine {
         }
 
         return outputFolder;
+    }
+
+    private void deleteFolderRecursive(Path dirPath) throws IOException {
+        if (Files.isDirectory(dirPath)) {
+            try (final Stream<Path> itemList = Files.list(dirPath)) {
+                itemList.forEach(itemPath -> {
+                    try {
+                        deleteFolderRecursive(itemPath);
+                    } catch (Throwable ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+            }
+        }
+
+        Files.deleteIfExists(dirPath);
     }
 
     private List<DecompileFileModel> doFilterFileByFiltedList(List<DecompileFileModel> decompileFileOriginalList) throws IOException {

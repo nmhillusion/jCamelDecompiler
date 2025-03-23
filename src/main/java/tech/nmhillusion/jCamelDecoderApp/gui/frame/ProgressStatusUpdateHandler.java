@@ -102,7 +102,7 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
 
             final Color logColor = switch (logType) {
                 case ERROR -> Color.RED;
-                case WARN -> Color.decode("0xFFB343");
+                case WARN -> Color.decode("0xb84300");
                 case INFO -> Color.BLUE;
                 case DEBUG -> Color.DARK_GRAY;
                 default -> Color.BLACK;
