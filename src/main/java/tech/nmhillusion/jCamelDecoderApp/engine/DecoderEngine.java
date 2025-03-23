@@ -142,12 +142,18 @@ public class DecoderEngine {
         for (int fileIdx = 0; fileIdx < decompileFileCount; fileIdx++) {
             var decompileItem = decompileFileList.get(fileIdx);
 
+            final String currentExecClassFilePath = String.valueOf(
+                            executionState.getDecodeFolderPath()
+                                    .relativize(decompileItem.getClassFilePath())
+                    )
+                    .replace("\\", "/");
             doLogMessage(
                     progressStatusUpdatableHandler
                     , LogType.INFO
                     , "Decompiling for {filePath}"
-                            .replace("{filePath}", String.valueOf(decompileItem.getClassFilePath())
-                                    .replace("\\", "/"))
+                            .replace("{filePath}"
+                                    , currentExecClassFilePath
+                            )
             );
 
             final int exitCode = baseDecompilerExecutor.execScriptFile(
@@ -157,9 +163,9 @@ public class DecoderEngine {
             doLogMessage(
                     progressStatusUpdatableHandler
                     , LogType.INFO
-                    , "Decompiled result: {exitCode} for {filePath}".replace("{exitCode}", String.valueOf(exitCode))
-                            .replace("{filePath}", String.valueOf(decompileItem.getClassFilePath())
-                                    .replace("\\", "/"))
+                    , "Decompiled result: {exitCode} for {filePath}"
+                            .replace("{exitCode}", String.valueOf(exitCode))
+                            .replace("{filePath}", currentExecClassFilePath)
             );
 
             if (null != progressStatusUpdatableHandler) {
