@@ -99,25 +99,19 @@ public class DecoderEngine {
 
         final Path outputFolder = executionState.getOutputFolder();
 
-        final List<Path> allPaths = traversalPaths(executionState.getClassesFolderPath());
-        final List<DecompileFileModel> decompileFileOriginalList = new ArrayList<>();
+        final List<DecompileFileModel> decompileFileOriginalList = traversalPaths(executionState.getClassesFolderPath())
+                .stream()
+                .filter(path_ -> Files.isRegularFile(path_) &&
+                        FileHelper.getFileExtensionFromName(String.valueOf(path_.getFileName()))
+                                .orElse("")
+                                .endsWith("class")
+                )
+                .map(path_ -> new DecompileFileModel()
+                        .setClassFilePath(path_)
+                        .setOutputFilePath(getOutputFilePath(path_, outputFolder))
+                )
+                .toList();
 
-        for (var path_ : allPaths) {
-//            LogHelper.getLogger(this).info("item path: {}", path_.toString().replace("\\", "/"));
-
-            if (Files.isRegularFile(path_)) {
-                if (FileHelper.getFileExtensionFromName(String.valueOf(path_.getFileName()))
-                        .orElse("")
-                        .endsWith("class")
-                ) {
-                    decompileFileOriginalList
-                            .add(new DecompileFileModel()
-                                    .setClassFilePath(path_)
-                                    .setOutputFilePath(getOutputFilePath(path_, outputFolder))
-                            );
-                }
-            }
-        }
 
         final List<DecompileFileModel> decompileFileList = doFilterFileByFiltedList(
                 decompileFileOriginalList

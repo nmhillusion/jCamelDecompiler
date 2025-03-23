@@ -1,13 +1,13 @@
 package tech.nmhillusion.jCamelDecoderApp.factory;
 
 import tech.nmhillusion.jCamelDecoderApp.constant.DecoderEngineEnum;
+import tech.nmhillusion.jCamelDecoderApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.n2mix.helper.YamlReader;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,7 +28,7 @@ public class DecoderEngineFactory {
     }
 
     private <T> T getConfigOfDecompiler(String configKey, Class<T> classOfValue) throws IOException {
-        try (final InputStream fis = Files.newInputStream(Path.of("./library/decompiler.config.yml"))) {
+        try (final InputStream fis = Files.newInputStream(PathsConstant.DECOMPILER_CONFIG_PATH.getAbsolutePath())) {
             return new YamlReader(fis).getProperty(configKey, classOfValue);
         }
     }
