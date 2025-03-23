@@ -59,8 +59,8 @@ public class DecoderEngine {
         return dicPaths;
     }
 
-    private Path mkdirForDirectory(Path absolutePathOfItem, Path compiledFolder, Path outputFolerPath) throws IOException {
-        final Path relativePathOfItem = compiledFolder.relativize(absolutePathOfItem.getParent());
+    private Path mkdirForDirectory(Path absolutePathOfItem, Path classesFolder, Path outputFolerPath) throws IOException {
+        final Path relativePathOfItem = classesFolder.relativize(absolutePathOfItem.getParent());
 
         if (StringValidator.isBlank(relativePathOfItem.toString())) {
             getLogger(this).info("sub-path is empty --> ignored");
@@ -99,7 +99,7 @@ public class DecoderEngine {
 
         final Path outputFolder = executionState.getOutputFolder();
 
-        final List<Path> allPaths = traversalPaths(executionState.getDecodeFolderPath());
+        final List<Path> allPaths = traversalPaths(executionState.getClassesFolderPath());
         final List<DecompileFileModel> decompileFileOriginalList = new ArrayList<>();
 
         for (var path_ : allPaths) {
@@ -145,7 +145,7 @@ public class DecoderEngine {
             var decompileItem = decompileFileList.get(fileIdx);
 
             final String currentExecClassFilePath = String.valueOf(
-                            executionState.getDecodeFolderPath()
+                            executionState.getClassesFolderPath()
                                     .relativize(decompileItem.getClassFilePath())
                     )
                     .replace("\\", "/");
@@ -160,7 +160,7 @@ public class DecoderEngine {
 
             mkdirForDirectory(
                     decompileItem.getClassFilePath()
-                    , executionState.getDecodeFolderPath()
+                    , executionState.getClassesFolderPath()
                     , outputFolder
             );
 
@@ -229,7 +229,7 @@ public class DecoderEngine {
     }
 
     private Path getOutputFilePath(Path itemAbsolutePath, Path outputDirPath) {
-        final Path relativeItemPath = executionState.getDecodeFolderPath()
+        final Path relativeItemPath = executionState.getClassesFolderPath()
                 .relativize(itemAbsolutePath);
 
         final String javaFileName = String.valueOf(relativeItemPath.getFileName())
