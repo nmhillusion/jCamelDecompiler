@@ -96,7 +96,16 @@ public class MainFrame extends JRootPane {
         }
 
         {
-            createFilterPanel(panel, rowIdx++);
+            gbc.gridx = 0;
+            gbc.gridy = rowIdx++;
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.gridheight = 1;
+            gbc.insets = new Insets(2, 2, 2, 2);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.weighty = 0.0;
+            gbc.weightx = 1.0;
+            panel.add(createFilterPanel(), gbc);
         }
 
         {
@@ -513,14 +522,19 @@ public class MainFrame extends JRootPane {
         panel.add(comboBox, gbc);
     }
 
-    private void createFilterPanel(JPanel panel, int rowIdx) {
+    private JPanel createFilterPanel() {
+        final GridBagLayout gbl = new GridBagLayout();
+        final JPanel panel = new JPanel(gbl);
+        final int rowIdx = 0;
+
         final GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridy = rowIdx;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
+        gbc.weighty = 0.0;
         gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
         final JCheckBox isFilterCheckBox = new JCheckBox("Is Filtered by File List");
         final JTextField filterField = new JTextField();
@@ -536,9 +550,15 @@ public class MainFrame extends JRootPane {
                     isSelected
             );
 
+            gbc.gridx = 0;
+            gbc.weightx = isSelected ? 0.0 : 1.0;
+            gbl.setConstraints(isFilterCheckBox, gbc);
+
             this.doUpdateDisplayOfFilteredPanel(isSelected, filterField, browseButton);
         });
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 1.0;
         gbc.gridx = 0;
         panel.add(isFilterCheckBox, gbc);
 
@@ -548,6 +568,8 @@ public class MainFrame extends JRootPane {
         filterField.setToolTipText("A text file contains list of paths to filter, separated by new line");
         filterField.setEnabled(false);
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 1.0;
         gbc.gridx = 1;
         panel.add(filterField, gbc);
 
@@ -586,10 +608,14 @@ public class MainFrame extends JRootPane {
             );
         });
 
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
         gbc.gridx = 2;
         panel.add(browseButton, gbc);
 
         this.doUpdateDisplayOfFilteredPanel(false, filterField, browseButton);
+
+        return panel;
     }
 
     private void doUpdateDisplayOfFilteredPanel(boolean isFiltered, JTextField filterField, JButton browseButton) {
