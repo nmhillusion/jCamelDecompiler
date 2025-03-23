@@ -4,7 +4,9 @@ import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
 import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.model.DecompileFileModel;
 import tech.nmhillusion.n2mix.helper.log.LogHelper;
+import tech.nmhillusion.n2mix.type.ChainMap;
 import tech.nmhillusion.n2mix.util.StringUtil;
+import tech.nmhillusion.n2mix.validator.StringValidator;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,15 +28,28 @@ public class BaseDecompilerExecutor {
     public BaseDecompilerExecutor(DecoderEngineModel decoderEngineModel) {
         this.decoderEngineModel = decoderEngineModel;
         final Path currentPath = PathHelper.getCurrentPath();
-        this.decompilerCmd = decoderEngineModel.getIsRelativeJarFile() ?
-                StringUtil.trimWithNull(
-                        Path.of(String.valueOf(currentPath), decoderEngineModel.getDecompilerCmdPath())
-                )
-                : decoderEngineModel.getDecompilerCmdPath();
+
         this.executedScriptPath = Path.of(String.valueOf(currentPath), "scripts", "base_decompile.bat");
 
-        getLogger(this).info("Executed path is {}", String.valueOf(executedScriptPath)
-                .replace("\\", "/")
+        {
+            final String compilerOptions = decoderEngineModel.getCompilerOptions();
+
+            final String execFile = decoderEngineModel.getIsRelativeJarFile() ?
+                    StringUtil.trimWithNull(
+                            Path.of(String.valueOf(currentPath), decoderEngineModel.getDecompilerCmdPath())
+                    )
+                    : decoderEngineModel.getDecompilerCmdPath();
+
+            this.decompilerCmd = StringValidator.isBlank(compilerOptions) ?
+                    execFile
+                    : String.format("%s %s", execFile, compilerOptions);
+        }
+
+        getLogger(this).info("Execution properties: {}", new ChainMap<String, String>()
+                .chainPut("executedPath", String.valueOf(executedScriptPath)
+                        .replace("\\", "/")
+                )
+                .chainPut("decompilerCmd", decompilerCmd)
         );
     }
 

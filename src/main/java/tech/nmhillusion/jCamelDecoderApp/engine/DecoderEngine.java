@@ -164,6 +164,7 @@ public class DecoderEngine {
                     , outputFolder
             );
 
+            /// Mark: EXECUTING DECOMPILATION
             final int exitCode = baseDecompilerExecutor.execScriptFile(
                     decompileItem
             );

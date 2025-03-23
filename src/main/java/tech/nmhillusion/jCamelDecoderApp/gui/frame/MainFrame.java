@@ -286,7 +286,7 @@ public class MainFrame extends JRootPane {
             inputField.setText(
                     classTestPath
             );
-            executionState.setDecodeFolderPath(
+            executionState.setClassesFolderPath(
                     Paths.get(classTestPath)
             );
         }
@@ -303,18 +303,18 @@ public class MainFrame extends JRootPane {
             fileChooser.setFileView(new CustomFileView());
             setCurrentDirectoryOfFileChooser(
                     fileChooser
-                    , executionState.getDecodeFolderPath()
+                    , executionState.getClassesFolderPath()
             );
             final int resultCode = fileChooser.showOpenDialog(null);
 
             if (JFileChooser.APPROVE_OPTION == resultCode) {
-                executionState.setDecodeFolderPath(
+                executionState.setClassesFolderPath(
                         fileChooser.getSelectedFile().toPath()
                 );
             }
 
             inputField.setText(
-                    String.valueOf(executionState.getDecodeFolderPath())
+                    String.valueOf(executionState.getClassesFolderPath())
             );
         });
 
