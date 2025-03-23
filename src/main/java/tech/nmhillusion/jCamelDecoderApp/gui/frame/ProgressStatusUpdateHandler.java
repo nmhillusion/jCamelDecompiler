@@ -7,11 +7,14 @@ import tech.nmhillusion.n2mix.helper.log.LogHelper;
 import tech.nmhillusion.n2mix.type.ChainMap;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
+import javax.swing.text.*;
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 
@@ -22,11 +25,14 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
  */
 public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
     private final JProgressBar progressBar;
-    private final JTextArea logView;
+    private final JTextPane logView;
     private final JScrollPane logScrollPane;
+    private final StyleContext sc = StyleContext.getDefaultStyleContext();
+    private final Style defaultStyle = sc.getStyle(StyleContext.DEFAULT_STYLE);
+    private final Map<LogType, Style> logTypeStyles = new TreeMap<>();
 
 
-    public ProgressStatusUpdateHandler(JProgressBar progressBar, JTextArea logView, JScrollPane logScrollPane) {
+    public ProgressStatusUpdateHandler(JProgressBar progressBar, JTextPane logView, JScrollPane logScrollPane) {
         this.progressBar = progressBar;
         this.logView = logView;
         this.logScrollPane = logScrollPane;
@@ -39,43 +45,73 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
         });
     }
 
-    public void removeFirstLogLine() {
+    private void removeFirstLine() {
+        StyledDocument doc = logView.getStyledDocument();
         try {
-            int endOfFirstLine = logView.getLineEndOffset(0);
-            logView.replaceRange("", 0, endOfFirstLine);
-        } catch (BadLocationException e) {
-            throw new RuntimeException(e);
+            int endOfFirstLine = Utilities.getRowEnd(logView, 0);
+            if (endOfFirstLine > 0) {
+                doc.remove(0, endOfFirstLine);
+            }
+        } catch (BadLocationException ex) {
+            getLogger(this).error("Error when remove first line", ex);
         }
     }
 
     @Override
     public void onLogMessage(LogType logType, String logMsg) {
         SwingUtilities.invokeLater(() -> {
-            final JScrollBar verticalScrollBar = logScrollPane.getVerticalScrollBar();
-            if (verticalScrollBar.isVisible()) {
-                final double logViewHeight = logScrollPane.getBounds().getHeight();
-                final float lineHeight = ViewHelper.getLineHeightOfTextArea(logView);
-                final int MIN_LOG_ROWS = Math.ceilDiv(Math.round((float) logViewHeight), Math.round(lineHeight)) * 2;
-                LogHelper.getLogger(this).info("current height of scroll log view: "
-                        + new ChainMap<>()
-                        .chainPut("logViewHeight", logViewHeight)
-                        .chainPut("lineHeight", lineHeight)
-                        .chainPut("MIN_LOG_ROWS", MIN_LOG_ROWS)
-                );
+            try {
+                final JScrollBar verticalScrollBar = logScrollPane.getVerticalScrollBar();
+                if (verticalScrollBar.isVisible()) {
 
-                int lineCount = logView.getLineCount();
-                while (MIN_LOG_ROWS < lineCount) {
-                    removeFirstLogLine();
-                    lineCount = logView.getLineCount();
+                    final double logViewHeight = logScrollPane.getBounds().getHeight();
+                    final float lineHeight = ViewHelper.getLineHeightOfTextArea(logView);
+                    final int MIN_LOG_ROWS = Math.ceilDiv(Math.round((float) logViewHeight), Math.round(lineHeight)) * 2;
+                    getLogger(this).info("current height of scroll log view: "
+                            + new ChainMap<>()
+                            .chainPut("logViewHeight", logViewHeight)
+                            .chainPut("lineHeight", lineHeight)
+                            .chainPut("MIN_LOG_ROWS", MIN_LOG_ROWS)
+                    );
+
+                    int lineCount = ViewHelper.getLineCount(logView);
+                    while (MIN_LOG_ROWS < lineCount) {
+                        removeFirstLine();
+                        lineCount = ViewHelper.getLineCount(logView);
+                    }
                 }
-            }
 
-            logView.append(
-                    "{timestamp} - [{logType}] - {logMessage}\n"
-                            .replace("{timestamp}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")))
-                            .replace("{logType}", logType.getValue().toUpperCase())
-                            .replace("{logMessage}", logMsg)
-            );
+                final StyledDocument doc = logView.getStyledDocument();
+                doc.insertString(
+                        doc.getLength()
+                        , "{timestamp} - [{logType}] - {logMessage}\n"
+                                .replace("{timestamp}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")))
+                                .replace("{logType}", logType.getValue().toUpperCase())
+                                .replace("{logMessage}", logMsg)
+                        , getLogMessageStyle(doc, logType)
+                );
+            } catch (Throwable ex) {
+                LogHelper.getLogger(this).error("Error when log message", ex);
+            }
+        });
+    }
+
+    private Style getLogMessageStyle(StyledDocument doc, LogType logType) {
+        return logTypeStyles.computeIfAbsent(logType, logType1 -> {
+            final Style style = doc.addStyle(logType.getValue() + "Style", defaultStyle);
+
+            final Color logColor = switch (logType) {
+                case ERROR -> Color.RED;
+                case WARN -> Color.decode("0xFFB343");
+                case INFO -> Color.BLUE;
+                case DEBUG -> Color.DARK_GRAY;
+                default -> Color.BLACK;
+            };
+
+            StyleConstants.setFontFamily(style, "Monospaced");
+            StyleConstants.setForeground(style, logColor);
+
+            return style;
         });
     }
 

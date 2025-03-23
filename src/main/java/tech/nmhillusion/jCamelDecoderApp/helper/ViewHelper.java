@@ -12,7 +12,7 @@ import java.nio.file.Path;
  * created date: 2025-03-22
  */
 public abstract class ViewHelper {
-    public static float getLineHeightOfTextArea(JTextArea textArea) {
+    public static float getLineHeightOfTextArea(JTextPane textArea) {
         final FontMetrics fontMetrics = textArea.getFontMetrics(textArea.getFont());
 
         return fontMetrics.getHeight();
@@ -26,5 +26,10 @@ public abstract class ViewHelper {
         } else {
             throw new UnsupportedOperationException("Desktop is not supported on this platform.");
         }
+    }
+
+    public static int getLineCount(JTextPane logView) {
+        return logView.getText().split("\n")
+                .length;
     }
 }

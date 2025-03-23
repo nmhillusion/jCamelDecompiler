@@ -124,6 +124,8 @@ public class MainFrame extends JRootPane {
             gbc.insets = new Insets(0, 0, 0, 0);
             gbc.fill = GridBagConstraints.NONE;
             gbc.anchor = GridBagConstraints.FIRST_LINE_END;
+            gbc.weighty = 0.0;
+            gbc.weightx = 1.0;
             panel.add(createDecodeButton(), gbc);
         }
 
@@ -162,7 +164,7 @@ public class MainFrame extends JRootPane {
             );
         }
 
-        final JTextArea logView = new JTextArea();
+        final JTextPane logView = new JTextPane();
         final JScrollPane logScrollPane = new JScrollPane(logView
                 , ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
                 , ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -175,7 +177,6 @@ public class MainFrame extends JRootPane {
             gbc.weighty = 1.0;
 
             logView.setAutoscrolls(true);
-            logView.setLineWrap(false);
 
             panel.add(
                     logScrollPane
@@ -214,7 +215,7 @@ public class MainFrame extends JRootPane {
                                     progressStatusUpdatableHandlerRef
                             );
 
-                    doLogMessageUI(LogType.INFO
+                    doLogMessageUI(LogType.WARN
                             , "Done decompilation to folder {outputFolder}".replace("{outputFolder}",
                                     String.valueOf(outputFolder)
                                             .replace("\\", "/")
