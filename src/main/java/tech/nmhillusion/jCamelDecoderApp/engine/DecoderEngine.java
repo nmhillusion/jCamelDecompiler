@@ -1,4 +1,4 @@
-package tech.nmhillusion.jCamelDecoderApp.gui.frame;
+package tech.nmhillusion.jCamelDecoderApp.engine;
 
 import tech.nmhillusion.jCamelDecoderApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecoderApp.constant.LogType;

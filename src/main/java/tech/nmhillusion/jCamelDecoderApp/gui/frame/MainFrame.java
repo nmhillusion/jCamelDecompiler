@@ -3,18 +3,15 @@ package tech.nmhillusion.jCamelDecoderApp.gui.frame;
 import tech.nmhillusion.jCamelDecoderApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecoderApp.constant.DecoderEngineEnum;
 import tech.nmhillusion.jCamelDecoderApp.constant.LogType;
+import tech.nmhillusion.jCamelDecoderApp.engine.DecoderEngine;
 import tech.nmhillusion.jCamelDecoderApp.factory.DecoderEngineFactory;
 import tech.nmhillusion.jCamelDecoderApp.gui.CustomFileView;
-import tech.nmhillusion.jCamelDecoderApp.helper.ViewHelper;
 import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.state.ExecutionState;
-import tech.nmhillusion.n2mix.helper.log.LogHelper;
-import tech.nmhillusion.n2mix.type.ChainMap;
 import tech.nmhillusion.n2mix.util.StringUtil;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.io.File;
@@ -22,8 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
@@ -148,16 +143,6 @@ public class MainFrame extends JRootPane {
         panel.repaint();
     }
 
-    private static void openFileExplorer(Path folderPath) throws IOException {
-        File directory = folderPath.toFile();
-        if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-            desktop.open(directory);
-        } else {
-            throw new UnsupportedOperationException("Desktop is not supported on this platform.");
-        }
-    }
-
     private JPanel createStatusProgressBar() {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
@@ -198,68 +183,13 @@ public class MainFrame extends JRootPane {
             );
         }
 
-        progressStatusUpdatableHandlerRef.set(new ProgressStatusUpdatable() {
-            @Override
-            public void onUpdateProgressValue(int newPercentValue) {
-                SwingUtilities.invokeLater(() -> {
-                    progressBar.setValue(newPercentValue);
-                });
-            }
-
-            public void removeFirstLogLine() {
-                try {
-                    int endOfFirstLine = logView.getLineEndOffset(0);
-                    logView.replaceRange("", 0, endOfFirstLine);
-                } catch (BadLocationException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            public void onLogMessage(LogType logType, String logMsg) {
-                SwingUtilities.invokeLater(() -> {
-                    final JScrollBar verticalScrollBar = logScrollPane.getVerticalScrollBar();
-                    if (verticalScrollBar.isVisible()) {
-                        final double logViewHeight = logScrollPane.getBounds().getHeight();
-                        final float lineHeight = ViewHelper.getLineHeightOfTextArea(logView);
-                        final int MIN_LOG_ROWS = Math.ceilDiv(Math.round((float) logViewHeight), Math.round(lineHeight)) * 2;
-                        LogHelper.getLogger(this).info("current height of scroll log view: "
-                                + new ChainMap<>()
-                                .chainPut("logViewHeight", logViewHeight)
-                                .chainPut("lineHeight", lineHeight)
-                                .chainPut("MIN_LOG_ROWS", MIN_LOG_ROWS)
-                        );
-
-                        int lineCount = logView.getLineCount();
-                        while (MIN_LOG_ROWS < lineCount) {
-                            removeFirstLogLine();
-                            lineCount = logView.getLineCount();
-                        }
-                    }
-
-                    logView.append(
-                            "{timestamp} - [{logType}] - {logMessage}\n"
-                                    .replace("{timestamp}", LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")))
-                                    .replace("{logType}", logType.getValue().toUpperCase())
-                                    .replace("{logMessage}", logMsg)
-                    );
-                });
-            }
-
-            @Override
-            public void onDone(String notificationContent, Path outputFolder) throws IOException {
-                final int resultDialog = JOptionPane.showConfirmDialog(panel
-                        , notificationContent
-                        , "Decompile"
-                        , JOptionPane.YES_NO_OPTION);
-
-                getLogger(this).info("result dialog = {}", resultDialog);
-
-                if (JOptionPane.YES_OPTION == resultDialog) {
-                    openFileExplorer(outputFolder);
-                }
-            }
-        });
+        progressStatusUpdatableHandlerRef.set(
+                new ProgressStatusUpdateHandler(
+                        progressBar
+                        , logView
+                        , logScrollPane
+                )
+        );
         panel.setBackground(Color.decode("#dddddd"));
 
         return panel;
