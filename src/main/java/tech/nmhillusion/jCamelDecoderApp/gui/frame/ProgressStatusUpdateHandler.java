@@ -45,10 +45,10 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
         });
     }
 
-    private void removeFirstLine() {
+    private void removeFirstLineOfLogView() {
         StyledDocument doc = logView.getStyledDocument();
         try {
-            int endOfFirstLine = Utilities.getRowEnd(logView, 0);
+            final int endOfFirstLine = logView.getText().indexOf('\n');
             if (endOfFirstLine > 0) {
                 doc.remove(0, endOfFirstLine);
             }
@@ -66,7 +66,7 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
 
                     final double logViewHeight = logScrollPane.getBounds().getHeight();
                     final float lineHeight = ViewHelper.getLineHeightOfTextArea(logView);
-                    final int MIN_LOG_ROWS = Math.ceilDiv(Math.round((float) logViewHeight), Math.round(lineHeight)) * 2;
+                    final int MIN_LOG_ROWS = Math.ceilDiv(Math.round((float) logViewHeight), Math.round(lineHeight)) * 3;
                     getLogger(this).info("current height of scroll log view: "
                             + new ChainMap<>()
                             .chainPut("logViewHeight", logViewHeight)
@@ -76,7 +76,7 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
 
                     int lineCount = ViewHelper.getLineCount(logView);
                     while (MIN_LOG_ROWS < lineCount) {
-                        removeFirstLine();
+                        removeFirstLineOfLogView();
                         lineCount = ViewHelper.getLineCount(logView);
                     }
                 }
