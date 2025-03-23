@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
@@ -18,7 +19,7 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
  */
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws URISyntaxException {
         getLogger(Main.class).info("Starting jCamelDecoderApp");
 
         try {

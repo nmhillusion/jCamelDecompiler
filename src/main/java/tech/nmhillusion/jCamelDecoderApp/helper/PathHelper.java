@@ -1,5 +1,6 @@
 package tech.nmhillusion.jCamelDecoderApp.helper;
 
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -12,6 +13,15 @@ public abstract class PathHelper {
 
     public static Path getCurrentPath() {
         return Paths.get("").toAbsolutePath();
+    }
+
+    public static Path getPathOfResource(String resourceName) {
+        try {
+            return Paths.get(ClassLoader.getSystemResource(resourceName).toURI())
+                    .toAbsolutePath();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
