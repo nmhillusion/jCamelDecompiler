@@ -88,7 +88,7 @@ public class DecoderEngine {
         }
     }
 
-    public Path execute(AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef) throws IOException, InterruptedException, InvocationTargetException {
+    public Path execute(AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef) throws Throwable {
         final ProgressStatusUpdatable progressStatusUpdatableHandler = progressStatusUpdatableHandlerRef.get();
 
         doLogMessage(
@@ -167,6 +167,11 @@ public class DecoderEngine {
             /// Mark: EXECUTING DECOMPILATION
             final int exitCode = baseDecompilerExecutor.execScriptFile(
                     decompileItem
+                    , msg -> doLogMessage(
+                            progressStatusUpdatableHandler
+                            , LogType.DEBUG
+                            , msg
+                    )
             );
 
             doLogMessage(

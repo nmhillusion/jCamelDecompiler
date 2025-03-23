@@ -3,12 +3,11 @@ package tech.nmhillusion.jCamelDecoderApp.runtime;
 import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
 import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.model.DecompileFileModel;
-import tech.nmhillusion.n2mix.helper.log.LogHelper;
 import tech.nmhillusion.n2mix.type.ChainMap;
+import tech.nmhillusion.n2mix.type.function.ThrowableVoidFunction;
 import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,7 +52,7 @@ public class BaseDecompilerExecutor {
         );
     }
 
-    public int execScriptFile(DecompileFileModel decompileFileModel) throws IOException, InterruptedException {
+    public int execScriptFile(DecompileFileModel decompileFileModel, ThrowableVoidFunction<String> logFunction) throws Throwable {
         final String[] cmdArray = {
                 "cmd.exe", "/c", String.valueOf(executedScriptPath),
                 decompilerCmd,
@@ -61,10 +60,11 @@ public class BaseDecompilerExecutor {
                 String.valueOf(decompileFileModel.getOutputFilePath())
         };
 
-        LogHelper.getLogger(this).info("Command executing: {}",
-                Stream.of(cmdArray)
-                        .map(it -> it.replace("\\", "/"))
-                        .collect(Collectors.joining(" "))
+        logFunction.throwableVoidApply("Command executing: %s".formatted(
+                        Stream.of(cmdArray)
+                                .map(it -> it.replace("\\", "/"))
+                                .collect(Collectors.joining(" "))
+                )
         );
 
         final Process process_ = Runtime.getRuntime()

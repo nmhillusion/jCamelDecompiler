@@ -223,7 +223,7 @@ public class MainFrame extends JRootPane {
                     );
 
                     onDoneDecompilation(outputFolder);
-                } catch (IOException | InterruptedException | InvocationTargetException ex) {
+                } catch (Throwable ex) {
                     try {
                         doLogMessageUI(LogType.ERROR, "Error when decompile [%s]: %s".formatted(ex.getClass().getSimpleName(), ex.getMessage()));
                     } catch (InterruptedException | InvocationTargetException ignored) {
