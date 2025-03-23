@@ -62,7 +62,7 @@ public class MainFrame extends JRootPane {
             titleLabel.setBorder(
                     BorderFactory.createMatteBorder(
                             0, 0, 5, 0
-                            , Color.GREEN
+                            , Color.decode("0x008B8B")
                     )
             );
 
@@ -70,7 +70,7 @@ public class MainFrame extends JRootPane {
             gbc.gridy = rowIdx++;
             gbc.gridwidth = GridBagConstraints.REMAINDER;
             gbc.gridheight = 1;
-            gbc.insets = new Insets(2, 2, 2, 2);
+            gbc.insets = new Insets(5, 5, 5, 5);
             gbc.fill = GridBagConstraints.CENTER;
             panel.add(titleLabel, gbc);
         }
@@ -478,7 +478,7 @@ public class MainFrame extends JRootPane {
         gbc.gridy = rowIdx;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.insets = new Insets(0, 0, 0, 10);
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.LINE_START;
 
@@ -518,6 +518,7 @@ public class MainFrame extends JRootPane {
             }
         });
 
+        gbc.insets = new Insets(0, 0, 0, 0);
         gbc.gridx = 1;
         panel.add(comboBox, gbc);
     }
