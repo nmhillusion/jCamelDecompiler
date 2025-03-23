@@ -10,8 +10,7 @@ import tech.nmhillusion.jCamelDecoderApp.constant.DecoderEngineEnum;
 public class DecoderEngineModel {
     private DecoderEngineEnum engineId;
     private String engineName;
-    private boolean isRelativeJarFile;
-    private String decompilerCmdPath;
+    private String libFilename;
     private String compilerOptions;
 
     public DecoderEngineEnum getEngineId() {
@@ -32,12 +31,12 @@ public class DecoderEngineModel {
         return this;
     }
 
-    public String getDecompilerCmdPath() {
-        return decompilerCmdPath;
+    public String getLibFilename() {
+        return libFilename;
     }
 
-    public DecoderEngineModel setDecompilerCmdPath(String decompilerCmdPath) {
-        this.decompilerCmdPath = decompilerCmdPath;
+    public DecoderEngineModel setLibFilename(String libFilename) {
+        this.libFilename = libFilename;
         return this;
     }
 
@@ -47,15 +46,6 @@ public class DecoderEngineModel {
 
     public DecoderEngineModel setCompilerOptions(String compilerOptions) {
         this.compilerOptions = compilerOptions;
-        return this;
-    }
-
-    public boolean getIsRelativeJarFile() {
-        return isRelativeJarFile;
-    }
-
-    public DecoderEngineModel setIsRelativeJarFile(boolean relativeJarFile) {
-        isRelativeJarFile = relativeJarFile;
         return this;
     }
 

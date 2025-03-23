@@ -1,6 +1,6 @@
 package tech.nmhillusion.jCamelDecoderApp.runtime;
 
-import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
+import tech.nmhillusion.jCamelDecoderApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.model.DecompileFileModel;
 import tech.nmhillusion.n2mix.type.ChainMap;
@@ -26,18 +26,15 @@ public class BaseDecompilerExecutor {
 
     public BaseDecompilerExecutor(DecoderEngineModel decoderEngineModel) {
         this.decoderEngineModel = decoderEngineModel;
-        final Path currentPath = PathHelper.getCurrentPath();
+        this.executedScriptPath = PathsConstant.BASE_DECOMPILE_SCRIPT_PATH.getAbsolutePath();
 
-        this.executedScriptPath = Path.of(String.valueOf(currentPath), "scripts", "base_decompile.bat");
-
+        final String libraryPath = StringUtil.trimWithNull(PathsConstant.LIBRARY_PATH.getAbsolutePath());
         {
             final String compilerOptions = decoderEngineModel.getCompilerOptions();
 
-            final String execFile = decoderEngineModel.getIsRelativeJarFile() ?
-                    StringUtil.trimWithNull(
-                            Path.of(String.valueOf(currentPath), decoderEngineModel.getDecompilerCmdPath())
-                    )
-                    : decoderEngineModel.getDecompilerCmdPath();
+            final String execFile = StringUtil.trimWithNull(
+                    Path.of(libraryPath, decoderEngineModel.getLibFilename())
+            );
 
             this.decompilerCmd = StringValidator.isBlank(compilerOptions) ?
                     execFile

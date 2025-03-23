@@ -41,16 +41,16 @@ public class DecoderEngineFactory {
 
                 switch (mId) {
                     case CFR -> engine.setEngineName("CFR Decoder")
-                            .setDecompilerCmdPath(
-                                    getConfigOfDecompiler("decompiler.cfr.path", String.class)
+                            .setLibFilename(
+                                    getConfigOfDecompiler("decompiler.cfr.libFilename", String.class)
                             )
                             .setCompilerOptions(
                                     getConfigOfDecompiler("decompiler.cfr.options", String.class)
                             )
                     ;
                     case Procyon -> engine.setEngineName("Procyon Decoder")
-                            .setDecompilerCmdPath(
-                                    getConfigOfDecompiler("decompiler.procyon.path", String.class)
+                            .setLibFilename(
+                                    getConfigOfDecompiler("decompiler.procyon.libFilename", String.class)
                             )
                             .setCompilerOptions(
                                     getConfigOfDecompiler("decompiler.procyon.options", String.class)

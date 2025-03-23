@@ -15,7 +15,8 @@ import java.nio.file.Path;
  */
 public enum PathsConstant {
     LIBRARY_PATH(Path.of(String.valueOf(PathHelper.getCurrentPath()), "library")),
-    DECOMPILER_CONFIG_PATH(Path.of(String.valueOf(LIBRARY_PATH.getAbsolutePath()), "decompiler.config.yml"));
+    DECOMPILER_CONFIG_PATH(Path.of(String.valueOf(LIBRARY_PATH.getAbsolutePath()), "decompiler.config.yml")),
+    BASE_DECOMPILE_SCRIPT_PATH(Path.of(String.valueOf(PathHelper.getCurrentPath()), "scripts", "base_decompile.bat"));
 
     private final Path absolutePath;
 

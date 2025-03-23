@@ -1,7 +1,7 @@
 decompiler:
   procyon:
     options: ""
-    path: "./library/procyon-decompiler-0.6.0.jar"
+    libFilename: "procyon-decompiler-0.6.0.jar"
   cfr:
     options: ""
-    path: "./library/cfr-0.152.jar"
+    libFilename: "cfr-0.152.jar"
