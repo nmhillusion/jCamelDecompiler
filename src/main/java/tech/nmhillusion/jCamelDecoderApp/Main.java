@@ -1,11 +1,13 @@
 package tech.nmhillusion.jCamelDecoderApp;
 
+import tech.nmhillusion.jCamelDecoderApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecoderApp.gui.frame.MainFrame;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 
@@ -19,7 +21,19 @@ public class Main {
     public static void main(String[] args) {
         getLogger(Main.class).info("Starting jCamelDecoderApp");
 
-        setLookAndFeelUI();
+        try {
+            setLookAndFeelUI();
+            throwIfUnavailableRequiredPaths();
+        } catch (Throwable ex) {
+            JOptionPane.showMessageDialog(
+                    null
+                    , "Error when init program: %s".formatted(ex.getMessage())
+                    , "Error"
+                    , JOptionPane.ERROR_MESSAGE
+            );
+            throw ex;
+        }
+
         SwingUtilities.invokeLater(() -> {
             try {
                 makeGUI();
@@ -28,6 +42,15 @@ public class Main {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    private static void throwIfUnavailableRequiredPaths() {
+        final PathsConstant[] requiredPaths = PathsConstant.values();
+        for (PathsConstant requiredPath : requiredPaths) {
+            if (Files.notExists(requiredPath.getAbsolutePath())) {
+                throw new IllegalStateException(String.format("Required path is not available: %s", requiredPath.getAbsolutePath()));
+            }
+        }
     }
 
     private static void setLookAndFeelUI() {
