@@ -1,5 +1,7 @@
 package tech.nmhillusion.jCamelDecoderApp.gui;
 
+import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileView;
 import java.awt.*;
@@ -7,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 /**
  * created by: nmhillusion
@@ -32,12 +35,12 @@ public class CustomFileView extends FileView {
             return FILE_ICON;
         }
 
-        try (final InputStream folderIcon = getClass().getClassLoader().getResourceAsStream("icon/file.png")) {
-            if (null == folderIcon) {
+        try (final InputStream iconStream = Files.newInputStream(PathHelper.getPathOfResource("icon/file.png"))) {
+            if (null == iconStream) {
                 throw new FileNotFoundException("File not found: icon/file.png");
             }
 
-            final ImageIcon imageIcon = new ImageIcon(folderIcon.readAllBytes());
+            final ImageIcon imageIcon = new ImageIcon(iconStream.readAllBytes());
             imageIcon.setImage(imageIcon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 
             FILE_ICON = imageIcon;
@@ -53,12 +56,12 @@ public class CustomFileView extends FileView {
             return FOLDER_ICON;
         }
 
-        try (final InputStream folderIcon = getClass().getClassLoader().getResourceAsStream("icon/folder.png")) {
-            if (null == folderIcon) {
+        try (final InputStream iconStream = Files.newInputStream(PathHelper.getPathOfResource("icon/folder.png"))) {
+            if (null == iconStream) {
                 throw new FileNotFoundException("File not found: icon/folder.png");
             }
 
-            final ImageIcon imageIcon = new ImageIcon(folderIcon.readAllBytes());
+            final ImageIcon imageIcon = new ImageIcon(iconStream.readAllBytes());
             imageIcon.setImage(imageIcon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
 
             FOLDER_ICON = imageIcon;

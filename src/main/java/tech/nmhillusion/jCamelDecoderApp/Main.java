@@ -2,6 +2,7 @@ package tech.nmhillusion.jCamelDecoderApp;
 
 import tech.nmhillusion.jCamelDecoderApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecoderApp.gui.frame.MainFrame;
+import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -28,7 +29,7 @@ public class Main {
         } catch (Throwable ex) {
             JOptionPane.showMessageDialog(
                     null
-                    , "Error when init program: %s".formatted(ex.getMessage())
+                    , "Error when init program [%s]: %s".formatted(ex.getClass().getSimpleName(), ex.getMessage())
                     , "Error"
                     , JOptionPane.ERROR_MESSAGE
             );
@@ -81,7 +82,7 @@ public class Main {
     }
 
     private static void setIconForApp(JFrame frame) throws IOException {
-        try (final InputStream icStream = ClassLoader.getSystemResourceAsStream("icon/app.png")) {
+        try (final InputStream icStream = Files.newInputStream(PathHelper.getPathOfResource("icon/app.png"))) {
             if (null == icStream) {
                 throw new IOException("App icon not found");
             }

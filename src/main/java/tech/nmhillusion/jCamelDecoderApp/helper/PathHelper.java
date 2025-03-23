@@ -1,8 +1,14 @@
 package tech.nmhillusion.jCamelDecoderApp.helper;
 
+import tech.nmhillusion.n2mix.helper.log.LogHelper;
+import tech.nmhillusion.n2mix.validator.StringValidator;
+
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 
 /**
  * created by: minguy1
@@ -17,10 +23,22 @@ public abstract class PathHelper {
 
     public static Path getPathOfResource(String resourceName) {
         try {
-            return Paths.get(ClassLoader.getSystemResource(resourceName).toURI())
-                    .toAbsolutePath();
+            final String appHomeDir = System.getenv("APP_HOME");
+            LogHelper.getLogger(PathHelper.class)
+                    .info("App Home = {}", appHomeDir);
+
+            if (StringValidator.isBlank(appHomeDir)) {
+                final URI resourceUri = ClassLoader.getSystemResource(resourceName).toURI();
+                getLogger(PathHelper.class).info("resourceUri = {}", resourceUri);
+                return Paths.get(resourceUri)
+                        .toAbsolutePath();
+            } else {
+                return Paths.get(appHomeDir, resourceName)
+                        .toAbsolutePath();
+            }
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            getLogger(PathHelper.class).error("Cannot find resource: %s".formatted(resourceName), e);
+            throw new RuntimeException("Cannot find resource: %s".formatted(resourceName), e);
         }
     }
 
