@@ -59,15 +59,15 @@ public class DecoderEngine {
         return dicPaths;
     }
 
-    private Path mkdirForDirectory(Path absolutePathOfItem, Path decodedFolder, Path outPath) throws IOException {
-        final Path relativePathOfItem = decodedFolder.relativize(absolutePathOfItem.getParent());
+    private Path mkdirForDirectory(Path absolutePathOfItem, Path compiledFolder, Path outputFolerPath) throws IOException {
+        final Path relativePathOfItem = compiledFolder.relativize(absolutePathOfItem.getParent());
 
         if (StringValidator.isBlank(relativePathOfItem.toString())) {
             getLogger(this).info("sub-path is empty --> ignored");
             return relativePathOfItem;
         }
 
-        final Path outItemPath = Paths.get(outPath.toString(), relativePathOfItem.toString());
+        final Path outItemPath = Paths.get(outputFolerPath.toString(), relativePathOfItem.toString());
         if (Files.exists(outItemPath)) {
             getLogger(this).info("Directory already existed: {}",
                     String.valueOf(outItemPath)
@@ -105,11 +105,7 @@ public class DecoderEngine {
         for (var path_ : allPaths) {
 //            LogHelper.getLogger(this).info("item path: {}", path_.toString().replace("\\", "/"));
 
-            if (Files.isDirectory(path_)) {
-                mkdirForDirectory(path_, executionState.getDecodeFolderPath(), outputFolder);
-            } else {
-                mkdirForDirectory(path_, executionState.getDecodeFolderPath(), outputFolder);
-
+            if (Files.isRegularFile(path_)) {
                 if (FileHelper.getFileExtensionFromName(String.valueOf(path_.getFileName()))
                         .orElse("")
                         .endsWith("class")
@@ -154,6 +150,12 @@ public class DecoderEngine {
                             .replace("{filePath}"
                                     , currentExecClassFilePath
                             )
+            );
+
+            mkdirForDirectory(
+                    decompileItem.getClassFilePath()
+                    , executionState.getDecodeFolderPath()
+                    , outputFolder
             );
 
             final int exitCode = baseDecompilerExecutor.execScriptFile(
