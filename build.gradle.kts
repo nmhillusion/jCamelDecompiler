@@ -25,6 +25,11 @@ tasks.test {
     useJUnitPlatform()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 application {
     mainClass = "tech.nmhillusion.jCamelDecoderApp.Main"
 }
