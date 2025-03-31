@@ -5,3 +5,6 @@ decompiler:
   cfr:
     options: ""
     libFilename: "cfr-0.152.jar"
+  fernFlower:
+    options: ""
+    libFilename: "fernflower.jar"

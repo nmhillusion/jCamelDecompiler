@@ -117,8 +117,14 @@ public class DecoderEngine {
                 decompileFileOriginalList
         );
 
-        final BaseDecompilerExecutor baseDecompilerExecutor = new BaseDecompilerExecutor(
+        final BaseDecompilerExecutor baseDecompilerExecutor = BaseDecompilerExecutor.getInstance(
                 decoderEngineModel
+        );
+
+        doLogMessage(
+                progressStatusUpdatableHandler
+                , LogType.INFO
+                , "Executing on executor: %s".formatted(baseDecompilerExecutor)
         );
 
         final int decompileFileCount = decompileFileList.size();

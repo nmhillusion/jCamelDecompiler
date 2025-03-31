@@ -56,6 +56,14 @@ public class DecoderEngineFactory {
                                     getConfigOfDecompiler("decompiler.procyon.options", String.class)
                             )
                     ;
+                    case FERN_FLOWER -> engine.setEngineName("FernFlower Decoder")
+                            .setLibFilename(
+                                    getConfigOfDecompiler("decompiler.fernFlower.libFilename", String.class)
+                            )
+                            .setCompilerOptions(
+                                    getConfigOfDecompiler("decompiler.fernFlower.options", String.class)
+                            )
+                    ;
                 }
 
                 return engine;
