@@ -3,7 +3,7 @@ package tech.nmhillusion.jCamelDecoderApp.model;
 import tech.nmhillusion.jCamelDecoderApp.constant.DecoderEngineEnum;
 
 /**
- * created by: minguy1
+ * created by: nmhillusion
  * <p>
  * created date: 2025-02-12
  */

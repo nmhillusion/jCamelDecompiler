@@ -6,7 +6,7 @@ import tech.nmhillusion.n2mix.type.Stringeable;
 import java.nio.file.Path;
 
 /**
- * created by: minguy1
+ * created by: nmhillusion
  * <p>
  * created date: 2025-02-12
  */
