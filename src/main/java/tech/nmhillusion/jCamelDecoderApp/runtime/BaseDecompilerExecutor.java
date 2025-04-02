@@ -7,7 +7,6 @@ import tech.nmhillusion.jCamelDecoderApp.model.DecompileFileModel;
 import tech.nmhillusion.jCamelDecoderApp.runtime.executor.CfrDecompilerExecutor;
 import tech.nmhillusion.jCamelDecoderApp.runtime.executor.FernFlowerDecompilerExecutor;
 import tech.nmhillusion.jCamelDecoderApp.runtime.executor.ProcyonDecompilerExecutor;
-import tech.nmhillusion.n2mix.type.ChainMap;
 import tech.nmhillusion.n2mix.type.function.ThrowableVoidFunction;
 import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
@@ -29,11 +28,9 @@ public abstract class BaseDecompilerExecutor {
     private static final Map<DecoderEngineEnum, BaseDecompilerExecutor> executorFactory = new TreeMap<>();
     private final DecoderEngineModel decoderEngineModel;
     private final String decompilerCmd;
-    private final Path executedScriptPath;
 
     public BaseDecompilerExecutor(DecoderEngineModel decoderEngineModel) {
         this.decoderEngineModel = decoderEngineModel;
-        this.executedScriptPath = PathsConstant.BASE_DECOMPILE_SCRIPT_PATH.getAbsolutePath();
 
         final String libraryPath = StringUtil.trimWithNull(PathsConstant.LIBRARY_PATH.getAbsolutePath());
         {
@@ -47,13 +44,6 @@ public abstract class BaseDecompilerExecutor {
                     execFile
                     : String.format("%s %s", execFile, compilerOptions);
         }
-
-        getLogger(this).info("Execution properties: {}", new ChainMap<String, String>()
-                .chainPut("executedPath", String.valueOf(executedScriptPath)
-                        .replace("\\", "/")
-                )
-                .chainPut("decompilerCmd", decompilerCmd)
-        );
     }
 
     public static BaseDecompilerExecutor getInstance(DecoderEngineModel decoderEngineModel) {
@@ -92,9 +82,7 @@ public abstract class BaseDecompilerExecutor {
         return decompilerCmd;
     }
 
-    public Path getExecutedScriptPath() {
-        return executedScriptPath;
-    }
+    public abstract Path getExecutedScriptPath();
 
     public DecoderEngineModel getDecoderEngineModel() {
         return decoderEngineModel;

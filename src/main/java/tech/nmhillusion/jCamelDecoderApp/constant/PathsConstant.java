@@ -20,8 +20,12 @@ public enum PathsConstant {
     DECOMPILER_CONFIG_PATH(
             Path.of(String.valueOf(LIBRARY_PATH.getAbsolutePath()), "decompiler.config.yml")
     ),
+    /// === Decompiler Script Paths ==========
     BASE_DECOMPILE_SCRIPT_PATH(
             PathHelper.getPathOfResource("scripts/base_decompile.bat")
+    ),
+    FERNFLOWER_DECOMPILE_SCRIPT_PATH(
+            PathHelper.getPathOfResource("scripts/fernflower_decompile.bat")
     );
 
     private final Path absolutePath;

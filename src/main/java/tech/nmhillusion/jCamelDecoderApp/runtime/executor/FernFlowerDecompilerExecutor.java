@@ -1,8 +1,11 @@
 package tech.nmhillusion.jCamelDecoderApp.runtime.executor;
 
+import tech.nmhillusion.jCamelDecoderApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.model.DecompileFileModel;
 import tech.nmhillusion.jCamelDecoderApp.runtime.BaseDecompilerExecutor;
+
+import java.nio.file.Path;
 
 /**
  * created by: nmhillusion
@@ -23,5 +26,10 @@ public class FernFlowerDecompilerExecutor extends BaseDecompilerExecutor {
                 String.valueOf(decompileFileModel.getClassFilePath()),
                 String.valueOf(decompileFileModel.getOutputFilePath().getParent())
         };
+    }
+
+    @Override
+    public Path getExecutedScriptPath() {
+        return PathsConstant.FERNFLOWER_DECOMPILE_SCRIPT_PATH.getAbsolutePath();
     }
 }
