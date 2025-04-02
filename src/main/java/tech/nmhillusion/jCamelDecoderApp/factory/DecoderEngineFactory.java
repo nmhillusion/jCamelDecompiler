@@ -56,7 +56,7 @@ public class DecoderEngineFactory {
                                     getConfigOfDecompiler("decompiler.procyon.options", String.class)
                             )
                     ;
-                    case FERN_FLOWER -> engine.setEngineName("FernFlower Decoder")
+                    case FERN_FLOWER -> engine.setEngineName("FernFlower Decoder (Decompiler inside Intellij IDEA)")
                             .setLibFilename(
                                     getConfigOfDecompiler("decompiler.fernFlower.libFilename", String.class)
                             )
