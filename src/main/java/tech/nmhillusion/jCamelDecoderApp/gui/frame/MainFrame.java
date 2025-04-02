@@ -466,9 +466,10 @@ public class MainFrame extends JRootPane {
         gbc.weighty = 0.0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.anchor = GridBagConstraints.BASELINE;
 
         final JCheckBox isFilterCheckBox = new JCheckBox("Is Filtered by File List");
+        final JPanel centralPanel = new JPanel(new GridBagLayout());
         final JTextField filterField = new JTextField();
         final JButton browseButton = new JButton("Browse");
 
@@ -486,7 +487,7 @@ public class MainFrame extends JRootPane {
             gbc.weightx = isSelected ? 0.0 : 1.0;
             gbl.setConstraints(isFilterCheckBox, gbc);
 
-            this.doUpdateDisplayOfFilteredPanel(isSelected, filterField, browseButton);
+            this.doUpdateDisplayOfFilteredPanel(isSelected, centralPanel, browseButton);
         });
 
         gbc.gridwidth = 1;
@@ -494,16 +495,48 @@ public class MainFrame extends JRootPane {
         gbc.gridx = 0;
         panel.add(isFilterCheckBox, gbc);
 
-        filterField.setPreferredSize(new Dimension(200, 20));
-        filterField.setSize(new Dimension(200, 20));
-        filterField.setMaximumSize(new Dimension(200, 20));
-        filterField.setToolTipText("A text file contains list of paths to filter, separated by new line");
-        filterField.setEnabled(false);
+        {
+            filterField.setPreferredSize(new Dimension(200, 20));
+            filterField.setSize(new Dimension(200, 20));
+            filterField.setMaximumSize(new Dimension(200, 20));
+            filterField.setToolTipText("A text file contains list of paths to filter, separated by new line");
+            filterField.setEnabled(false);
+
+            gbc.gridy = 0;
+            gbc.gridwidth = 1;
+            gbc.weightx = 1.0;
+            gbc.gridx = 1;
+            centralPanel.add(filterField, gbc);
+
+            final JTextArea descriptionPanel = new JTextArea();
+            descriptionPanel.setText("""
+                    A text file contains list of paths to filter, separated by new line.
+                    It should be relative paths from the target folder path.
+                    Example:
+                        Target folder: C:/my-folder
+                        Class file to filter: C:/my-folder/com/example/myapp/Application.class
+                        Filter path should be: com/example/myapp/Application.class or com/example/myapp/Application.java
+                    """);
+            descriptionPanel.setFont(
+                    new Font(Font.MONOSPACED, Font.PLAIN, 11)
+            );
+            descriptionPanel.setBackground(Color.LIGHT_GRAY);
+            descriptionPanel.setLineWrap(true);
+            descriptionPanel.setWrapStyleWord(true);
+            descriptionPanel.setEditable(false);
+            descriptionPanel.setOpaque(true);
+
+            gbc.gridy = 1;
+            gbc.gridwidth = 1;
+            gbc.weightx = 1.0;
+            gbc.gridx = 1;
+            centralPanel.add(descriptionPanel, gbc);
+        }
 
         gbc.gridwidth = 1;
         gbc.weightx = 1.0;
         gbc.gridx = 1;
-        panel.add(filterField, gbc);
+        panel.add(centralPanel, gbc);
 
         browseButton.addActionListener(e -> {
             //-- Mark: Open file dialog
@@ -545,13 +578,13 @@ public class MainFrame extends JRootPane {
         gbc.gridx = 2;
         panel.add(browseButton, gbc);
 
-        this.doUpdateDisplayOfFilteredPanel(false, filterField, browseButton);
+        this.doUpdateDisplayOfFilteredPanel(false, centralPanel, browseButton);
 
         return panel;
     }
 
-    private void doUpdateDisplayOfFilteredPanel(boolean isFiltered, JTextField filterField, JButton browseButton) {
-        filterField.setVisible(isFiltered);
+    private void doUpdateDisplayOfFilteredPanel(boolean isFiltered, JPanel centralPanel, JButton browseButton) {
+        centralPanel.setVisible(isFiltered);
         browseButton.setVisible(isFiltered);
     }
 }

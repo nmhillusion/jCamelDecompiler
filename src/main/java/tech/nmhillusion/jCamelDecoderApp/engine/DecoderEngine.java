@@ -227,7 +227,9 @@ public class DecoderEngine {
         return decompileFileOriginalList
                 .stream()
                 .filter(decompileFileModel -> {
-                    final Path classFilePath = decompileFileModel.getClassFilePath();
+                    final Path classFilePath = executionState.getClassesFolderPath().relativize(
+                            decompileFileModel.getClassFilePath()
+                    );
                     final String pathWithoutExt = StringUtil.trimWithNull(classFilePath).replaceFirst("\\.(class|java)$", "");
                     return (allLines.stream().anyMatch(pathWithoutExt::endsWith));
                 })
