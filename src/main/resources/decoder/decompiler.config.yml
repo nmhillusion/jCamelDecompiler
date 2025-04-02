@@ -7,4 +7,4 @@ decompiler:
     libFilename: "cfr-0.152.jar"
   fernFlower:
     options: ""
-    libFilename: "fernflower.jar"
+    libFilename: "fernflower_20250304.jar"
