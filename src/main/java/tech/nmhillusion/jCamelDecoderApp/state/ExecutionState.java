@@ -12,7 +12,7 @@ import java.nio.file.Path;
 public class ExecutionState extends Stringeable {
     private Path classesFolderPath;
     private Path outputFolder;
-    private String decoderEngineId;
+    private String decompilerEngineId;
     private boolean isOnlyFilteredFiles;
     private Path filteredFilePath;
 
@@ -34,12 +34,12 @@ public class ExecutionState extends Stringeable {
         return this;
     }
 
-    public String getDecoderEngineId() {
-        return decoderEngineId;
+    public String getDecompilerEngineId() {
+        return decompilerEngineId;
     }
 
-    public ExecutionState setDecoderEngineId(String decoderEngineId) {
-        this.decoderEngineId = decoderEngineId;
+    public ExecutionState setDecompilerEngineId(String decompilerEngineId) {
+        this.decompilerEngineId = decompilerEngineId;
         return this;
     }
 

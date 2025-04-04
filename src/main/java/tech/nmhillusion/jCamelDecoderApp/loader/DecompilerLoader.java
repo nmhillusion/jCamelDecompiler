@@ -1,7 +1,7 @@
 package tech.nmhillusion.jCamelDecoderApp.loader;
 
 import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
-import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
+import tech.nmhillusion.jCamelDecoderApp.model.DecompilerEngineModel;
 import tech.nmhillusion.n2mix.helper.YamlReader;
 import tech.nmhillusion.n2mix.helper.log.LogHelper;
 import tech.nmhillusion.n2mix.util.StringUtil;
@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class DecompilerLoader {
     private static final DecompilerLoader INSTANCE = new DecompilerLoader();
-    private final List<DecoderEngineModel> DECODER_ENGINES = new ArrayList<>();
+    private final List<DecompilerEngineModel> DECOMPILER_ENGINES = new ArrayList<>();
 
     private DecompilerLoader() {
     }
@@ -30,9 +30,9 @@ public class DecompilerLoader {
         return INSTANCE;
     }
 
-    public List<DecoderEngineModel> loadEngines() {
-        if (null == DECODER_ENGINES || DECODER_ENGINES.isEmpty()) {
-            final List<DecoderEngineModel> engines = new ArrayList<>();
+    public List<DecompilerEngineModel> loadEngines() {
+        if (null == DECOMPILER_ENGINES || DECOMPILER_ENGINES.isEmpty()) {
+            final List<DecompilerEngineModel> engines = new ArrayList<>();
 
             final Path resourcePath = PathHelper.getPathOfResource("decoder/decompilers.config.yml");
             try (final InputStream fis = Files.newInputStream(resourcePath)) {
@@ -43,7 +43,7 @@ public class DecompilerLoader {
 
                     if (decompiler instanceof Map<?, ?> decompilerMap) {
                         engines.add(
-                                new DecoderEngineModel()
+                                new DecompilerEngineModel()
                                         .setEngineId(
                                                 StringUtil.trimWithNull(decompilerMap.get("id"))
                                         )
@@ -66,13 +66,13 @@ public class DecompilerLoader {
                 throw new RuntimeException(e);
             }
 
-            DECODER_ENGINES.addAll(engines);
+            DECOMPILER_ENGINES.addAll(engines);
         }
 
-        return DECODER_ENGINES;
+        return DECOMPILER_ENGINES;
     }
 
-    public DecoderEngineModel loadEngine(String engineId) {
+    public DecompilerEngineModel loadEngine(String engineId) {
         return loadEngines()
                 .stream()
                 .filter(it -> it.getEngineId().equals(engineId))

@@ -2,8 +2,8 @@ package tech.nmhillusion.jCamelDecoderApp.runtime;
 
 import tech.nmhillusion.jCamelDecoderApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
-import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.model.DecompileFileModel;
+import tech.nmhillusion.jCamelDecoderApp.model.DecompilerEngineModel;
 import tech.nmhillusion.n2mix.type.function.ThrowableVoidFunction;
 import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
@@ -23,18 +23,18 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
  */
 public class DecompilerExecutor {
     private static final Map<String, DecompilerExecutor> executorFactory = new TreeMap<>();
-    private final DecoderEngineModel decoderEngineModel;
+    private final DecompilerEngineModel decompilerEngineModel;
     private final String decompilerCmd;
 
-    public DecompilerExecutor(DecoderEngineModel decoderEngineModel) {
-        this.decoderEngineModel = decoderEngineModel;
+    public DecompilerExecutor(DecompilerEngineModel decompilerEngineModel) {
+        this.decompilerEngineModel = decompilerEngineModel;
 
         final String libraryPath = StringUtil.trimWithNull(PathsConstant.LIBRARY_PATH.getAbsolutePath());
         {
-            final String compilerOptions = decoderEngineModel.getCompilerOptions();
+            final String compilerOptions = decompilerEngineModel.getCompilerOptions();
 
             final String execFile = StringUtil.trimWithNull(
-                    Path.of(libraryPath, decoderEngineModel.getLibFilename())
+                    Path.of(libraryPath, decompilerEngineModel.getLibFilename())
             );
 
             this.decompilerCmd = StringValidator.isBlank(compilerOptions) ?
@@ -43,7 +43,7 @@ public class DecompilerExecutor {
         }
     }
 
-    protected String[] getCmdArrayOfDecoder(DecompileFileModel decompileFileModel) {
+    protected String[] getCmdArrayOfDecompiler(DecompileFileModel decompileFileModel) {
         return new String[]{
                 "cmd.exe", "/c", String.valueOf(getExecutedScriptPath()),
                 getDecompilerCmd(),
@@ -53,7 +53,7 @@ public class DecompilerExecutor {
     }
 
     public int execScriptFile(DecompileFileModel decompileFileModel, ThrowableVoidFunction<String> logFunction) throws Throwable {
-        final String[] cmdArray = getCmdArrayOfDecoder(decompileFileModel);
+        final String[] cmdArray = getCmdArrayOfDecompiler(decompileFileModel);
 
         logFunction.throwableVoidApply("Command executing: %s".formatted(
                         Stream.of(cmdArray)
@@ -79,11 +79,11 @@ public class DecompilerExecutor {
     public Path getExecutedScriptPath() {
         return PathHelper.getPathOfResource(
                 "scripts/{execScriptFilename}"
-                        .replace("{execScriptFilename}", decoderEngineModel.getExecScriptFilename())
+                        .replace("{execScriptFilename}", decompilerEngineModel.getExecScriptFilename())
         );
     }
 
-    public DecoderEngineModel getDecoderEngineModel() {
-        return decoderEngineModel;
+    public DecompilerEngineModel getDecompilerEngineModel() {
+        return decompilerEngineModel;
     }
 }

@@ -3,8 +3,8 @@ package tech.nmhillusion.jCamelDecoderApp.engine;
 import tech.nmhillusion.jCamelDecoderApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecoderApp.constant.LogType;
 import tech.nmhillusion.jCamelDecoderApp.loader.DecompilerLoader;
-import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.model.DecompileFileModel;
+import tech.nmhillusion.jCamelDecoderApp.model.DecompilerEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.runtime.DecompilerExecutor;
 import tech.nmhillusion.jCamelDecoderApp.state.ExecutionState;
 import tech.nmhillusion.n2mix.helper.storage.FileHelper;
@@ -29,13 +29,13 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
  * <p>
  * created date: 2025-03-15
  */
-public class DecoderEngine {
+public class DecompilerEngine {
     private final ExecutionState executionState;
-    private final DecoderEngineModel decoderEngineModel;
+    private final DecompilerEngineModel decompilerEngineModel;
 
-    public DecoderEngine(ExecutionState executionState) {
+    public DecompilerEngine(ExecutionState executionState) {
         this.executionState = executionState;
-        this.decoderEngineModel = DecompilerLoader.getInstance().loadEngine(executionState.getDecoderEngineId());
+        this.decompilerEngineModel = DecompilerLoader.getInstance().loadEngine(executionState.getDecompilerEngineId());
     }
 
     private List<Path> traversalPaths(Path rootPath) throws IOException {
@@ -117,7 +117,7 @@ public class DecoderEngine {
                 decompileFileOriginalList
         );
 
-        final DecompilerExecutor decompilerExecutor = new DecompilerExecutor(decoderEngineModel);
+        final DecompilerExecutor decompilerExecutor = new DecompilerExecutor(decompilerEngineModel);
 
         doLogMessage(
                 progressStatusUpdatableHandler

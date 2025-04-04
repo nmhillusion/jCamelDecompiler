@@ -5,7 +5,7 @@ package tech.nmhillusion.jCamelDecoderApp.model;
  * <p>
  * created date: 2025-02-12
  */
-public class DecoderEngineModel {
+public class DecompilerEngineModel {
     private String engineId;
     private String engineName;
     private String libFilename;
@@ -16,7 +16,7 @@ public class DecoderEngineModel {
         return engineId;
     }
 
-    public DecoderEngineModel setEngineId(String engineId) {
+    public DecompilerEngineModel setEngineId(String engineId) {
         this.engineId = engineId;
         return this;
     }
@@ -25,7 +25,7 @@ public class DecoderEngineModel {
         return engineName;
     }
 
-    public DecoderEngineModel setEngineName(String engineName) {
+    public DecompilerEngineModel setEngineName(String engineName) {
         this.engineName = engineName;
         return this;
     }
@@ -34,7 +34,7 @@ public class DecoderEngineModel {
         return libFilename;
     }
 
-    public DecoderEngineModel setLibFilename(String libFilename) {
+    public DecompilerEngineModel setLibFilename(String libFilename) {
         this.libFilename = libFilename;
         return this;
     }
@@ -43,7 +43,7 @@ public class DecoderEngineModel {
         return compilerOptions;
     }
 
-    public DecoderEngineModel setCompilerOptions(String compilerOptions) {
+    public DecompilerEngineModel setCompilerOptions(String compilerOptions) {
         this.compilerOptions = compilerOptions;
         return this;
     }
@@ -52,7 +52,7 @@ public class DecoderEngineModel {
         return execScriptFilename;
     }
 
-    public DecoderEngineModel setExecScriptFilename(String execScriptFilename) {
+    public DecompilerEngineModel setExecScriptFilename(String execScriptFilename) {
         this.execScriptFilename = execScriptFilename;
         return this;
     }
