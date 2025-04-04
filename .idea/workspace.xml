@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dfbfbbe1-4274-44cf-9cfe-50adb24b1fb2" name="Changes" comment="update config of vcs">
+    <list default="true" id="dfbfbbe1-4274-44cf-9cfe-50adb24b1fb2" name="Changes" comment="re-typo for config folder name">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tech/nmhillusion/jCamelDecompilerApp/constant/PathsConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tech/nmhillusion/jCamelDecompilerApp/constant/PathsConstant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tech/nmhillusion/jCamelDecompilerApp/loader/DecompilerLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tech/nmhillusion/jCamelDecompilerApp/loader/DecompilerLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/decoder/cfr-0.152.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/decompiler/cfr-0.152.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/decoder/decompiler.config.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/decoder/decompilers.config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/decompiler/decompilers.config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/decoder/fernflower_20250304.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/decompiler/fernflower_20250304.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/decoder/procyon-decompiler-0.6.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/decompiler/procyon-decompiler-0.6.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/decompiler/decompilers.config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/decompiler/decompilers.config.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,7 +117,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743778153309</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="re-typo for config folder name">
+      <option name="closed" value="true" />
+      <created>1743778385397</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1743778385397</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -132,7 +134,8 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="re-typo decoder to decompiler" />
     <MESSAGE value="update config of vcs" />
-    <option name="LAST_COMMIT_MESSAGE" value="update config of vcs" />
+    <MESSAGE value="re-typo for config folder name" />
+    <option name="LAST_COMMIT_MESSAGE" value="re-typo for config folder name" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
