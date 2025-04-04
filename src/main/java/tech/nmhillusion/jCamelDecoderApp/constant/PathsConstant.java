@@ -22,7 +22,7 @@ public enum PathsConstant {
     ),
     /// === Decompiler Script Paths ==========
     BASE_DECOMPILE_SCRIPT_PATH(
-            PathHelper.getPathOfResource("scripts/base_decompile.bat")
+            PathHelper.getPathOfResource("scripts/procyon_decompile.bat")
     ),
     FERNFLOWER_DECOMPILE_SCRIPT_PATH(
             PathHelper.getPathOfResource("scripts/fernflower_decompile.bat")

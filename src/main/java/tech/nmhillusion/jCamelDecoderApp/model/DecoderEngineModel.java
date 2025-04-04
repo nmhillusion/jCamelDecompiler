@@ -1,23 +1,22 @@
 package tech.nmhillusion.jCamelDecoderApp.model;
 
-import tech.nmhillusion.jCamelDecoderApp.constant.DecoderEngineEnum;
-
 /**
  * created by: nmhillusion
  * <p>
  * created date: 2025-02-12
  */
 public class DecoderEngineModel {
-    private DecoderEngineEnum engineId;
+    private String engineId;
     private String engineName;
     private String libFilename;
     private String compilerOptions;
+    private String execScriptFilename;
 
-    public DecoderEngineEnum getEngineId() {
+    public String getEngineId() {
         return engineId;
     }
 
-    public DecoderEngineModel setEngineId(DecoderEngineEnum engineId) {
+    public DecoderEngineModel setEngineId(String engineId) {
         this.engineId = engineId;
         return this;
     }
@@ -49,8 +48,17 @@ public class DecoderEngineModel {
         return this;
     }
 
+    public String getExecScriptFilename() {
+        return execScriptFilename;
+    }
+
+    public DecoderEngineModel setExecScriptFilename(String execScriptFilename) {
+        this.execScriptFilename = execScriptFilename;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return engineName;
+        return getEngineName();
     }
 }

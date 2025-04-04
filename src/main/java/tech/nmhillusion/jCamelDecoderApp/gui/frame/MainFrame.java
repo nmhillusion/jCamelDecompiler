@@ -1,11 +1,10 @@
 package tech.nmhillusion.jCamelDecoderApp.gui.frame;
 
 import tech.nmhillusion.jCamelDecoderApp.actionable.ProgressStatusUpdatable;
-import tech.nmhillusion.jCamelDecoderApp.constant.DecoderEngineEnum;
 import tech.nmhillusion.jCamelDecoderApp.constant.LogType;
 import tech.nmhillusion.jCamelDecoderApp.engine.DecoderEngine;
-import tech.nmhillusion.jCamelDecoderApp.factory.DecoderEngineFactory;
 import tech.nmhillusion.jCamelDecoderApp.gui.CustomFileView;
+import tech.nmhillusion.jCamelDecoderApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.state.ExecutionState;
 import tech.nmhillusion.n2mix.util.StringUtil;
@@ -33,8 +32,8 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 public class MainFrame extends JRootPane {
     private final ExecutionState executionState = new ExecutionState();
     private final Executor DECOMPILE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
-    private final DecoderEngineFactory decoderEngineFactory = DecoderEngineFactory.getInstance();
     private final AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = new AtomicReference<>();
+    private final DecompilerLoader decompilerLoader = DecompilerLoader.getInstance();
 
     public MainFrame() {
         this.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
@@ -419,17 +418,15 @@ public class MainFrame extends JRootPane {
         final JComboBox<DecoderEngineModel> comboBox = new JComboBox<>();
 
         boolean inited = false;
-        for (final DecoderEngineEnum decoderEngineEnum : DecoderEngineEnum.values()) {
+        for (final DecoderEngineModel decoderEngine : decompilerLoader.loadEngines()) {
             comboBox.addItem(
-                    decoderEngineFactory.getEngine(
-                            decoderEngineEnum
-                    )
+                    decoderEngine
             );
 
             if (!inited) {
                 inited = true;
                 comboBox.setSelectedIndex(0);
-                executionState.setDecoderEngineType(DecoderEngineEnum.Procyon);
+                executionState.setDecoderEngineId(decoderEngine.getEngineId());
             }
         }
 
@@ -437,10 +434,10 @@ public class MainFrame extends JRootPane {
             if (ItemEvent.SELECTED == selectedItemEvent.getStateChange()) {
                 final Object selectedItemRaw = comboBox.getSelectedItem();
                 if (selectedItemRaw instanceof DecoderEngineModel decoderEngineModel) {
-                    final DecoderEngineEnum selectedDecodeEngineId = decoderEngineModel.getEngineId();
+                    final String selectedDecodeEngineId = decoderEngineModel.getEngineId();
                     getLogger(this).info("Selected item event: " + selectedDecodeEngineId);
 
-                    executionState.setDecoderEngineType(
+                    executionState.setDecoderEngineId(
                             selectedDecodeEngineId
                     );
                 } else {

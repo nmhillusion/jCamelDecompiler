@@ -2,10 +2,10 @@ package tech.nmhillusion.jCamelDecoderApp.engine;
 
 import tech.nmhillusion.jCamelDecoderApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecoderApp.constant.LogType;
-import tech.nmhillusion.jCamelDecoderApp.factory.DecoderEngineFactory;
+import tech.nmhillusion.jCamelDecoderApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecoderApp.model.DecoderEngineModel;
 import tech.nmhillusion.jCamelDecoderApp.model.DecompileFileModel;
-import tech.nmhillusion.jCamelDecoderApp.runtime.BaseDecompilerExecutor;
+import tech.nmhillusion.jCamelDecoderApp.runtime.DecompilerExecutor;
 import tech.nmhillusion.jCamelDecoderApp.state.ExecutionState;
 import tech.nmhillusion.n2mix.helper.storage.FileHelper;
 import tech.nmhillusion.n2mix.util.StringUtil;
@@ -35,7 +35,7 @@ public class DecoderEngine {
 
     public DecoderEngine(ExecutionState executionState) {
         this.executionState = executionState;
-        this.decoderEngineModel = DecoderEngineFactory.getInstance().getEngine(executionState.getDecoderEngineType());
+        this.decoderEngineModel = DecompilerLoader.getInstance().loadEngine(executionState.getDecoderEngineId());
     }
 
     private List<Path> traversalPaths(Path rootPath) throws IOException {
@@ -117,14 +117,12 @@ public class DecoderEngine {
                 decompileFileOriginalList
         );
 
-        final BaseDecompilerExecutor baseDecompilerExecutor = BaseDecompilerExecutor.getInstance(
-                decoderEngineModel
-        );
+        final DecompilerExecutor decompilerExecutor = new DecompilerExecutor(decoderEngineModel);
 
         doLogMessage(
                 progressStatusUpdatableHandler
                 , LogType.INFO
-                , "Executing on executor: %s".formatted(baseDecompilerExecutor)
+                , "Executing on executor: %s".formatted(decompilerExecutor)
         );
 
         final int decompileFileCount = decompileFileList.size();
@@ -165,7 +163,7 @@ public class DecoderEngine {
             );
 
             /// Mark: EXECUTING DECOMPILATION
-            final int exitCode = baseDecompilerExecutor.execScriptFile(
+            final int exitCode = decompilerExecutor.execScriptFile(
                     decompileItem
                     , msg -> doLogMessage(
                             progressStatusUpdatableHandler

@@ -1,6 +1,5 @@
 package tech.nmhillusion.jCamelDecoderApp.state;
 
-import tech.nmhillusion.jCamelDecoderApp.constant.DecoderEngineEnum;
 import tech.nmhillusion.n2mix.type.Stringeable;
 
 import java.nio.file.Path;
@@ -13,7 +12,7 @@ import java.nio.file.Path;
 public class ExecutionState extends Stringeable {
     private Path classesFolderPath;
     private Path outputFolder;
-    private DecoderEngineEnum decoderEngineType;
+    private String decoderEngineId;
     private boolean isOnlyFilteredFiles;
     private Path filteredFilePath;
 
@@ -35,12 +34,12 @@ public class ExecutionState extends Stringeable {
         return this;
     }
 
-    public DecoderEngineEnum getDecoderEngineType() {
-        return decoderEngineType;
+    public String getDecoderEngineId() {
+        return decoderEngineId;
     }
 
-    public ExecutionState setDecoderEngineType(DecoderEngineEnum decoderEngineType) {
-        this.decoderEngineType = decoderEngineType;
+    public ExecutionState setDecoderEngineId(String decoderEngineId) {
+        this.decoderEngineId = decoderEngineId;
         return this;
     }
 

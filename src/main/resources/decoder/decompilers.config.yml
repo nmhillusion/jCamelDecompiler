@@ -1,0 +1,16 @@
+decompilers:
+  - id: procyon
+    name: Procyon Decoder
+    options: ""
+    libFilename: "procyon-decompiler-0.6.0.jar"
+    execScriptFilename: "procyon_decompile.bat"
+  - id: cfr
+    name: CFR Decoder
+    options: ""
+    libFilename: "cfr-0.152.jar"
+    execScriptFilename: "cfr_decompile.bat"
+  - id: fernFlower
+    name: FernFlower Decoder (Decompiler inside Intellij IDEA)
+    options: ""
+    libFilename: "fernflower_20250304.jar"
+    execScriptFilename: "fernflower_decompile.bat"
