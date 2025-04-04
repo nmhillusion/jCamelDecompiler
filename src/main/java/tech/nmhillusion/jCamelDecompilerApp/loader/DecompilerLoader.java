@@ -1,6 +1,6 @@
 package tech.nmhillusion.jCamelDecompilerApp.loader;
 
-import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
+import tech.nmhillusion.jCamelDecompilerApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
 import tech.nmhillusion.n2mix.helper.YamlReader;
 import tech.nmhillusion.n2mix.helper.log.LogHelper;
@@ -34,7 +34,7 @@ public class DecompilerLoader {
         if (null == DECOMPILER_ENGINES || DECOMPILER_ENGINES.isEmpty()) {
             final List<DecompilerEngineModel> engines = new ArrayList<>();
 
-            final Path resourcePath = PathHelper.getPathOfResource("decoder/decompilers.config.yml");
+            final Path resourcePath = PathsConstant.DECOMPILERS_CONFIG_PATH.getAbsolutePath();
             try (final InputStream fis = Files.newInputStream(resourcePath)) {
                 final List<?> decompilers = new YamlReader(fis).getProperty("decompilers", List.class);
 

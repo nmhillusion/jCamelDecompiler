@@ -15,17 +15,10 @@ import java.nio.file.Path;
  */
 public enum PathsConstant {
     LIBRARY_PATH(
-            PathHelper.getPathOfResource("decoder")
+            PathHelper.getPathOfResource("decompiler")
     ),
-    DECOMPILER_CONFIG_PATH(
-            Path.of(String.valueOf(LIBRARY_PATH.getAbsolutePath()), "decompiler.config.yml")
-    ),
-    /// === Decompiler Script Paths ==========
-    BASE_DECOMPILE_SCRIPT_PATH(
-            PathHelper.getPathOfResource("scripts/procyon_decompile.bat")
-    ),
-    FERNFLOWER_DECOMPILE_SCRIPT_PATH(
-            PathHelper.getPathOfResource("scripts/fernflower_decompile.bat")
+    DECOMPILERS_CONFIG_PATH(
+            Path.of(String.valueOf(LIBRARY_PATH.getAbsolutePath()), "decompilers.config.yml")
     );
 
     private final Path absolutePath;
