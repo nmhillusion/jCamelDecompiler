@@ -68,6 +68,8 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800);
         frame.setTitle("jCamelDecompilerApp");
+        frame.setLocationRelativeTo(null);
+        frame.setLocationByPlatform(true);
         setIconForApp(frame);
 
         frame.setContentPane(
