@@ -1,4 +1,4 @@
-package tech.nmhillusion.jCamelDecoderApp.state;
+package tech.nmhillusion.jCamelDecompilerApp.state;
 
 import tech.nmhillusion.n2mix.type.Stringeable;
 

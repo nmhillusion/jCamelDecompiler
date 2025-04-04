@@ -1,7 +1,7 @@
-package tech.nmhillusion.jCamelDecoderApp.loader;
+package tech.nmhillusion.jCamelDecompilerApp.loader;
 
-import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
-import tech.nmhillusion.jCamelDecoderApp.model.DecompilerEngineModel;
+import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
+import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
 import tech.nmhillusion.n2mix.helper.YamlReader;
 import tech.nmhillusion.n2mix.helper.log.LogHelper;
 import tech.nmhillusion.n2mix.util.StringUtil;

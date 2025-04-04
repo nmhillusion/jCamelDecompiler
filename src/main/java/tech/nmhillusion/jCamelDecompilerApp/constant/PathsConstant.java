@@ -1,10 +1,10 @@
-package tech.nmhillusion.jCamelDecoderApp.constant;/**
+package tech.nmhillusion.jCamelDecompilerApp.constant;/**
  * created by: nmhillusion
  * <p>
  * created date: 2025-03-23
  */
 
-import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
+import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
 
 import java.nio.file.Path;
 

@@ -1,6 +1,6 @@
-package tech.nmhillusion.jCamelDecoderApp.gui;
+package tech.nmhillusion.jCamelDecompilerApp.gui;
 
-import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
+import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileView;

@@ -1,8 +1,8 @@
-package tech.nmhillusion.jCamelDecoderApp;
+package tech.nmhillusion.jCamelDecompilerApp;
 
-import tech.nmhillusion.jCamelDecoderApp.constant.PathsConstant;
-import tech.nmhillusion.jCamelDecoderApp.gui.frame.MainFrame;
-import tech.nmhillusion.jCamelDecoderApp.helper.PathHelper;
+import tech.nmhillusion.jCamelDecompilerApp.constant.PathsConstant;
+import tech.nmhillusion.jCamelDecompilerApp.gui.frame.MainFrame;
+import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

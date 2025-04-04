@@ -1,4 +1,4 @@
-package tech.nmhillusion.jCamelDecoderApp.helper;
+package tech.nmhillusion.jCamelDecompilerApp.helper;
 
 import tech.nmhillusion.n2mix.helper.log.LogHelper;
 import tech.nmhillusion.n2mix.validator.StringValidator;

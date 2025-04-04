@@ -1,4 +1,4 @@
-package tech.nmhillusion.jCamelDecoderApp.model;
+package tech.nmhillusion.jCamelDecompilerApp.model;
 
 /**
  * created by: nmhillusion

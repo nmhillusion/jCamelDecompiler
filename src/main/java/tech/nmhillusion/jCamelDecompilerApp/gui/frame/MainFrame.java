@@ -1,12 +1,12 @@
-package tech.nmhillusion.jCamelDecoderApp.gui.frame;
+package tech.nmhillusion.jCamelDecompilerApp.gui.frame;
 
-import tech.nmhillusion.jCamelDecoderApp.actionable.ProgressStatusUpdatable;
-import tech.nmhillusion.jCamelDecoderApp.constant.LogType;
-import tech.nmhillusion.jCamelDecoderApp.engine.DecompilerEngine;
-import tech.nmhillusion.jCamelDecoderApp.gui.CustomFileView;
-import tech.nmhillusion.jCamelDecoderApp.loader.DecompilerLoader;
-import tech.nmhillusion.jCamelDecoderApp.model.DecompilerEngineModel;
-import tech.nmhillusion.jCamelDecoderApp.state.ExecutionState;
+import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
+import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
+import tech.nmhillusion.jCamelDecompilerApp.engine.DecompilerEngine;
+import tech.nmhillusion.jCamelDecompilerApp.gui.CustomFileView;
+import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
+import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
+import tech.nmhillusion.jCamelDecompilerApp.state.ExecutionState;
 import tech.nmhillusion.n2mix.util.StringUtil;
 
 import javax.swing.*;

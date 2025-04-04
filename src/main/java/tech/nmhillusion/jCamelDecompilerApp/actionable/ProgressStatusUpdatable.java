@@ -1,6 +1,6 @@
-package tech.nmhillusion.jCamelDecoderApp.actionable;
+package tech.nmhillusion.jCamelDecompilerApp.actionable;
 
-import tech.nmhillusion.jCamelDecoderApp.constant.LogType;
+import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

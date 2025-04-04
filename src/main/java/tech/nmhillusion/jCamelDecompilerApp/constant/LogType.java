@@ -1,4 +1,4 @@
-package tech.nmhillusion.jCamelDecoderApp.constant;
+package tech.nmhillusion.jCamelDecompilerApp.constant;
 
 /**
  * created by: nmhillusion

@@ -1,4 +1,4 @@
-package tech.nmhillusion.jCamelDecoderApp.helper;
+package tech.nmhillusion.jCamelDecompilerApp.helper;
 
 import javax.swing.*;
 import java.awt.*;

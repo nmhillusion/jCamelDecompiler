@@ -1,8 +1,8 @@
-package tech.nmhillusion.jCamelDecoderApp.gui.frame;
+package tech.nmhillusion.jCamelDecompilerApp.gui.frame;
 
-import tech.nmhillusion.jCamelDecoderApp.actionable.ProgressStatusUpdatable;
-import tech.nmhillusion.jCamelDecoderApp.constant.LogType;
-import tech.nmhillusion.jCamelDecoderApp.helper.ViewHelper;
+import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
+import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
+import tech.nmhillusion.jCamelDecompilerApp.helper.ViewHelper;
 import tech.nmhillusion.n2mix.helper.log.LogHelper;
 import tech.nmhillusion.n2mix.type.ChainMap;
 
