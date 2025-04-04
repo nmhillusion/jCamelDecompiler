@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
@@ -277,16 +276,16 @@ public class MainFrame extends JRootPane {
         inputField.setMinimumSize(new Dimension(200, 20));
         inputField.setEnabled(false);
 
-        {
-            /// TODO: 2025-03-15 TESTING
-            final String classTestPath = "C:\\Users\\nmhil\\OneDrive\\Desktop\\tmp\\test-decoder\\classes";
-            inputField.setText(
-                    classTestPath
-            );
-            executionState.setClassesFolderPath(
-                    Paths.get(classTestPath)
-            );
-        }
+//        {
+//            /// TODO: 2025-03-15 TESTING
+//            final String classTestPath = "C:\\Users\\nmhil\\OneDrive\\Desktop\\tmp\\test-decoder\\classes";
+//            inputField.setText(
+//                    classTestPath
+//            );
+//            executionState.setClassesFolderPath(
+//                    Paths.get(classTestPath)
+//            );
+//        }
 
         gbc.gridwidth = 1;
         gbc.weightx = 1.0;
@@ -355,16 +354,16 @@ public class MainFrame extends JRootPane {
         inputField.setMinimumSize(new Dimension(200, 20));
         inputField.setEnabled(false);
 
-        {
-            /// TODO: 2025-03-15 TESTING
-            final String outJavaTestPath = "C:\\Users\\nmhil\\OneDrive\\Desktop\\tmp\\test-decoder\\outJava";
-            inputField.setText(
-                    outJavaTestPath
-            );
-            executionState.setOutputFolder(
-                    Paths.get(outJavaTestPath)
-            );
-        }
+//        {
+//            /// TODO: 2025-03-15 TESTING
+//            final String outJavaTestPath = "C:\\Users\\nmhil\\OneDrive\\Desktop\\tmp\\test-decoder\\outJava";
+//            inputField.setText(
+//                    outJavaTestPath
+//            );
+//            executionState.setOutputFolder(
+//                    Paths.get(outJavaTestPath)
+//            );
+//        }
 
         gbc.gridwidth = 1;
         gbc.weightx = 1.0;
