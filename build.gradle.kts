@@ -4,7 +4,7 @@ plugins {
     id("distribution")
 }
 
-group = "tech.nmhillusion.jCamelDecoderApp"
+group = "tech.nmhillusion.jCamelDecompilerApp"
 version = "1.0"
 
 repositories {
@@ -31,12 +31,12 @@ java {
 }
 
 application {
-    mainClass = "tech.nmhillusion.jCamelDecoderApp.Main"
+    mainClass = "tech.nmhillusion.jCamelDecompilerApp.Main"
 }
 
 distributions {
     main {
-        distributionBaseName = "jCamelDecoderApp"
+        distributionBaseName = "jCamelDecompilerApp"
         contents {
             from("src/main/resources")
         }

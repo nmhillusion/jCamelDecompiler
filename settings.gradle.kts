@@ -1,2 +1,2 @@
-rootProject.name = "jCamelDecoderApp"
+rootProject.name = "jCamelDecompilerApp"
 

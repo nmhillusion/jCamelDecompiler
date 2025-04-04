@@ -51,12 +51,12 @@ public class MainFrame extends JRootPane {
         int rowIdx = 0;
 
         {
-            final JLabel titleLabel = new JLabel("jCamelDecoderApp");
+            final JLabel titleLabel = new JLabel("jCamelDecompilerApp");
             titleLabel.setFont(new Font("Calibri", Font.PLAIN, 25));
             titleLabel.setBorder(
                     BorderFactory.createMatteBorder(
-                            0, 0, 5, 0
-                            , Color.decode("0x008B8B")
+                            0, 0, 1, 0
+                            , Color.decode("0xeedddd")
                     )
             );
 
@@ -79,10 +79,10 @@ public class MainFrame extends JRootPane {
             gbc.fill = GridBagConstraints.BOTH;
             gbc.weighty = 0.0;
             gbc.weightx = 1.0;
-            panel.add(createInputDecodeFolder(), gbc);
+            panel.add(createInputDecompileFolder(), gbc);
 
             gbc.gridy = rowIdx++;
-            panel.add(createOutputDecodeFolder(), gbc);
+            panel.add(createOutputDecompileFolder(), gbc);
         }
 
         {
@@ -125,7 +125,7 @@ public class MainFrame extends JRootPane {
             gbc.anchor = GridBagConstraints.FIRST_LINE_END;
             gbc.weighty = 0.0;
             gbc.weightx = 1.0;
-            panel.add(createDecodeButton(), gbc);
+            panel.add(createDecompileButton(), gbc);
         }
 
         {
@@ -195,17 +195,15 @@ public class MainFrame extends JRootPane {
         return panel;
     }
 
-    private JButton createDecodeButton() {
-        final JButton decodeButton = new JButton("Decode");
-        final Dimension decodeButtonSize = new Dimension(100, 30);
+    private JButton createDecompileButton() {
+        final JButton decompileButton = new JButton("Decompile");
+        final Dimension decompileButtonSize = new Dimension(200, 30);
 
-        decodeButton.setBackground(Color.CYAN);
-        decodeButton.setSize(decodeButtonSize);
-        decodeButton.setPreferredSize(decodeButtonSize);
-        decodeButton.addActionListener(e -> {
-//            String text = inputField.getText();
-//            System.out.println("Decoded text: " + text);
-            getLogger(this).info("Decode for: {}", executionState);
+        decompileButton.setBackground(Color.CYAN);
+        decompileButton.setSize(decompileButtonSize);
+        decompileButton.setPreferredSize(decompileButtonSize);
+        decompileButton.addActionListener(e -> {
+            getLogger(this).info("Decompile for: {}", executionState);
 
             DECOMPILE_EXECUTOR.execute(() -> {
                 try {
@@ -232,7 +230,7 @@ public class MainFrame extends JRootPane {
             });
         });
 
-        return decodeButton;
+        return decompileButton;
     }
 
     private void onDoneDecompilation(Path outputFolder) throws IOException {
@@ -254,7 +252,7 @@ public class MainFrame extends JRootPane {
         }
     }
 
-    private JPanel createInputDecodeFolder() {
+    private JPanel createInputDecompileFolder() {
         final JPanel panel = new JPanel(new GridBagLayout());
         final int rowIdx = 0;
 
@@ -271,7 +269,7 @@ public class MainFrame extends JRootPane {
         gbc.gridwidth = 1;
         gbc.weightx = 0.0;
         gbc.gridx = 0;
-        panel.add(new JLabel("Folder to decode: "), gbc);
+        panel.add(new JLabel("Folder to decompile: "), gbc);
 
         final JTextField inputField = new JTextField();
 //        inputField.setPreferredSize(new Dimension(200, 20));
@@ -333,7 +331,7 @@ public class MainFrame extends JRootPane {
         }
     }
 
-    private JPanel createOutputDecodeFolder() {
+    private JPanel createOutputDecompileFolder() {
         final JPanel panel = new JPanel(new GridBagLayout());
         final int rowIdx = 0;
 
@@ -418,15 +416,15 @@ public class MainFrame extends JRootPane {
         final JComboBox<DecompilerEngineModel> comboBox = new JComboBox<>();
 
         boolean inited = false;
-        for (final DecompilerEngineModel decoderEngine : decompilerLoader.loadEngines()) {
+        for (final DecompilerEngineModel decompilerEngine : decompilerLoader.loadEngines()) {
             comboBox.addItem(
-                    decoderEngine
+                    decompilerEngine
             );
 
             if (!inited) {
                 inited = true;
                 comboBox.setSelectedIndex(0);
-                executionState.setDecompilerEngineId(decoderEngine.getEngineId());
+                executionState.setDecompilerEngineId(decompilerEngine.getEngineId());
             }
         }
 
@@ -434,14 +432,14 @@ public class MainFrame extends JRootPane {
             if (ItemEvent.SELECTED == selectedItemEvent.getStateChange()) {
                 final Object selectedItemRaw = comboBox.getSelectedItem();
                 if (selectedItemRaw instanceof DecompilerEngineModel decompilerEngineModel) {
-                    final String selectedDecodeEngineId = decompilerEngineModel.getEngineId();
-                    getLogger(this).info("Selected item event: " + selectedDecodeEngineId);
+                    final String selectedDecompilerEngineId = decompilerEngineModel.getEngineId();
+                    getLogger(this).info("Selected item event: " + selectedDecompilerEngineId);
 
                     executionState.setDecompilerEngineId(
-                            selectedDecodeEngineId
+                            selectedDecompilerEngineId
                     );
                 } else {
-                    throw new IllegalArgumentException("Selected item is not a valid DecoderEngine");
+                    throw new IllegalArgumentException("Selected item is not a valid DecompilerEngine");
                 }
             }
         });

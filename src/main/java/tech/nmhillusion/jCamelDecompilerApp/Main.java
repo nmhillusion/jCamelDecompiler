@@ -21,7 +21,7 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 
 public class Main {
     public static void main(String[] args) throws URISyntaxException {
-        getLogger(Main.class).info("Starting jCamelDecoderApp");
+        getLogger(Main.class).info("Starting jCamelDecompilerApp");
 
         try {
             setLookAndFeelUI();
@@ -67,7 +67,7 @@ public class Main {
         final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800);
-        frame.setTitle("jCamelDecoderApp");
+        frame.setTitle("jCamelDecompilerApp");
         setIconForApp(frame);
 
         frame.setContentPane(
