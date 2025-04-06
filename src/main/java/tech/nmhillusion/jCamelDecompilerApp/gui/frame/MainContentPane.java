@@ -11,6 +11,7 @@ import tech.nmhillusion.jCamelDecompilerApp.loader.ExecutionStateLoader;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
 import tech.nmhillusion.jCamelDecompilerApp.state.ExecutionState;
 import tech.nmhillusion.n2mix.util.StringUtil;
+import tech.nmhillusion.n2mix.validator.StringValidator;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -43,6 +44,7 @@ public class MainContentPane extends JRootPane {
 
     public MainContentPane(JFrame mainFrame) {
         this.mainFrame = mainFrame;
+        loadState();
 
         this.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
@@ -150,7 +152,6 @@ public class MainContentPane extends JRootPane {
         this.setContentPane(panel);
         panel.updateUI();
         panel.repaint();
-        loadState();
     }
 
     private void loadState() {
@@ -304,6 +305,9 @@ public class MainContentPane extends JRootPane {
         inputField.setMinimumSize(new Dimension(200, 20));
         inputField.setEnabled(false);
 
+        inputField.setText(
+                StringUtil.trimWithNull(executionState.getClassesFolderPath())
+        );
 //        {
 //            /// TODO: 2025-03-15 TESTING
 //            final String classTestPath = "C:\\Users\\nmhil\\OneDrive\\Desktop\\tmp\\test-decoder\\classes";
@@ -382,6 +386,9 @@ public class MainContentPane extends JRootPane {
         inputField.setMinimumSize(new Dimension(200, 20));
         inputField.setEnabled(false);
 
+        inputField.setText(
+                StringUtil.trimWithNull(executionState.getOutputFolder())
+        );
 //        {
 //            /// TODO: 2025-03-15 TESTING
 //            final String outJavaTestPath = "C:\\Users\\nmhil\\OneDrive\\Desktop\\tmp\\test-decoder\\outJava";
@@ -449,9 +456,17 @@ public class MainContentPane extends JRootPane {
             );
 
             if (!inited) {
-                inited = true;
-                comboBox.setSelectedIndex(0);
-                executionState.setDecompilerEngineId(decompilerEngine.getEngineId());
+
+                if (StringValidator.isBlank(executionState.getDecompilerEngineId())) {
+                    inited = true;
+                    comboBox.setSelectedIndex(0);
+                    executionState.setDecompilerEngineId(decompilerEngine.getEngineId());
+                } else {
+                    if (decompilerEngine.getEngineId().equals(executionState.getDecompilerEngineId())) {
+                        inited = true;
+                        comboBox.setSelectedItem(decompilerEngine);
+                    }
+                }
             }
         }
 
@@ -595,7 +610,16 @@ public class MainContentPane extends JRootPane {
         gbc.gridx = 2;
         panel.add(browseButton, gbc);
 
-        this.doUpdateDisplayOfFilteredPanel(false, centralPanel, browseButton);
+        /// Mark: Load from State
+        isFilterCheckBox.setSelected(
+                executionState.getIsOnlyFilteredFiles()
+        );
+        filterField.setText(
+                StringUtil.trimWithNull(executionState.getFilteredFilePath())
+        );
+
+
+        this.doUpdateDisplayOfFilteredPanel(executionState.getIsOnlyFilteredFiles(), centralPanel, browseButton);
 
         return panel;
     }
