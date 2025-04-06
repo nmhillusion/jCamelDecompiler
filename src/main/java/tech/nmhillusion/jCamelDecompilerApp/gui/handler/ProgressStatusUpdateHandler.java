@@ -118,7 +118,7 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
     @Override
     public void onDone(String notificationContent, Path outputFolder) throws IOException {
         final int resultDialog = JOptionPane.showConfirmDialog(
-                logView
+                logScrollPane
                 , notificationContent
                 , "Decompile"
                 , JOptionPane.YES_NO_OPTION);

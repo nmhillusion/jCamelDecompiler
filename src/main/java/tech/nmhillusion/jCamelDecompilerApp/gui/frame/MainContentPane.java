@@ -509,7 +509,6 @@ public class MainContentPane extends JRootPane {
             gbc.gridx = 1;
             centralPanel.add(filterField, gbc);
 
-//            final ExplainHowToFilterPane descriptionPanel = new ExplainHowToFilterPane();
             final JLabel explainLink = new JLabel("<html><a href=''>How to filter</a></html>");
             explainLink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             explainLink.addMouseListener(new MouseAdapter() {
