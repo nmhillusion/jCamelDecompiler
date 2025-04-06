@@ -4,6 +4,8 @@ import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 import tech.nmhillusion.jCamelDecompilerApp.engine.DecompilerEngine;
 import tech.nmhillusion.jCamelDecompilerApp.gui.CustomFileView;
+import tech.nmhillusion.jCamelDecompilerApp.gui.component.ExplainHowToFilterPane;
+import tech.nmhillusion.jCamelDecompilerApp.gui.handler.ProgressStatusUpdateHandler;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
 import tech.nmhillusion.jCamelDecompilerApp.state.ExecutionState;
@@ -13,6 +15,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,13 +32,16 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
  * <p>
  * created date: 2024-11-30
  */
-public class MainFrame extends JRootPane {
+public class MainContentPane extends JRootPane {
+    private final JFrame mainFrame;
     private final ExecutionState executionState = new ExecutionState();
     private final Executor DECOMPILE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
     private final AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = new AtomicReference<>();
     private final DecompilerLoader decompilerLoader = DecompilerLoader.getInstance();
 
-    public MainFrame() {
+    public MainContentPane(JFrame mainFrame) {
+        this.mainFrame = mainFrame;
+
         this.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
         final JPanel panel = new JPanel();
@@ -502,29 +509,25 @@ public class MainFrame extends JRootPane {
             gbc.gridx = 1;
             centralPanel.add(filterField, gbc);
 
-            final JTextArea descriptionPanel = new JTextArea();
-            descriptionPanel.setText("""
-                    A text file contains list of paths to filter, separated by new line.
-                    It should be relative paths from the target folder path.
-                    Example:
-                        Target folder: C:/my-folder
-                        Class file to filter: C:/my-folder/com/example/myapp/Application.class
-                        Filter path should be: com/example/myapp/Application.class or com/example/myapp/Application.java
-                    """);
-            descriptionPanel.setFont(
-                    new Font(Font.MONOSPACED, Font.PLAIN, 11)
-            );
-            descriptionPanel.setBackground(Color.LIGHT_GRAY);
-            descriptionPanel.setLineWrap(true);
-            descriptionPanel.setWrapStyleWord(true);
-            descriptionPanel.setEditable(false);
-            descriptionPanel.setOpaque(true);
+//            final ExplainHowToFilterPane descriptionPanel = new ExplainHowToFilterPane();
+            final JLabel explainLink = new JLabel("<html><a href=''>How to filter</a></html>");
+            explainLink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            explainLink.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    final JDialog d = new JDialog(mainFrame, "How to filter", Dialog.ModalityType.TOOLKIT_MODAL);
+                    d.add(new ExplainHowToFilterPane());
+                    d.pack();
+                    d.setLocationRelativeTo(mainFrame);
+                    d.setVisible(true);
+                }
+            });
 
             gbc.gridy = 1;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
             gbc.gridx = 1;
-            centralPanel.add(descriptionPanel, gbc);
+            centralPanel.add(explainLink, gbc);
         }
 
         gbc.gridwidth = 1;

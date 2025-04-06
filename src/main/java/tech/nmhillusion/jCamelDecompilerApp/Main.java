@@ -1,7 +1,7 @@
 package tech.nmhillusion.jCamelDecompilerApp;
 
 import tech.nmhillusion.jCamelDecompilerApp.constant.PathsConstant;
-import tech.nmhillusion.jCamelDecompilerApp.gui.frame.MainFrame;
+import tech.nmhillusion.jCamelDecompilerApp.gui.frame.MainContentPane;
 import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
 
 import javax.imageio.ImageIO;
@@ -73,7 +73,7 @@ public class Main {
         setIconForApp(frame);
 
         frame.setContentPane(
-                new MainFrame()
+                new MainContentPane(frame)
         );
 
 //        frame.pack();
