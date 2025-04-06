@@ -1,5 +1,6 @@
 package tech.nmhillusion.jCamelDecompilerApp.helper;
 
+import tech.nmhillusion.jCamelDecompilerApp.constant.FilenameConstant;
 import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
@@ -20,26 +21,13 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
  */
 public abstract class PathHelper {
 
-    public static Path getPathOfResource(String... resourceName) {
+    public static Path getPathOfResource(String... resourceNames) {
         try {
-//            final String appHomeDir = System.getenv("APP_HOME");
-//            getLogger(PathHelper.class)
-//                    .info("App Home = {}", appHomeDir);
-//
-//            if (StringValidator.isBlank(appHomeDir)) {
-//                final URI resourceUri = ClassLoader.getSystemResource(resourceName).toURI();
-//                getLogger(PathHelper.class).info("resourceUri = {}", resourceUri);
-//                return Paths.get(resourceUri)
-//                        .toAbsolutePath();
-//            } else {
-//                return Paths.get(appHomeDir, resourceName)
-//                        .toAbsolutePath();
-//            }
-            return Paths.get(StringUtil.trimWithNull(getPathOfAppHome()), resourceName)
+            return Paths.get(StringUtil.trimWithNull(getPathOfAppHome()), resourceNames)
                     .toAbsolutePath();
         } catch (URISyntaxException e) {
-            getLogger(PathHelper.class).error("Cannot find resource: %s".formatted(Arrays.toString(resourceName)), e);
-            throw new RuntimeException("Cannot find resource: %s".formatted(Arrays.toString(resourceName)), e);
+            getLogger(PathHelper.class).error("Cannot find resource: %s".formatted(Arrays.toString(resourceNames)), e);
+            throw new RuntimeException("Cannot find resource: %s".formatted(Arrays.toString(resourceNames)), e);
         }
     }
 
@@ -60,7 +48,9 @@ public abstract class PathHelper {
                 .info("App Home = {}", appHomeDir);
 
         if (StringValidator.isBlank(appHomeDir)) {
-            final URI resourceUri = ClassLoader.getSystemResource("decompiler").toURI();
+            final URI resourceUri = ClassLoader.getSystemResource(
+                    FilenameConstant.FOLDER__LIBRARY.getFilename()
+            ).toURI();
             getLogger(PathHelper.class).info("resourceUri = {}", resourceUri);
 
             return Paths.get(resourceUri)
