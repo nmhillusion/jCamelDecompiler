@@ -3,6 +3,7 @@ package tech.nmhillusion.jCamelDecompilerApp.state;
 import tech.nmhillusion.n2mix.type.Stringeable;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * created by: nmhillusion
@@ -15,6 +16,16 @@ public class ExecutionState extends Stringeable {
     private String decompilerEngineId;
     private boolean isOnlyFilteredFiles;
     private Path filteredFilePath;
+
+    public static ExecutionState from(ExecutionStateSerializable executionStateSerializable) {
+        final ExecutionState executionState = new ExecutionState();
+        executionState.setClassesFolderPath(Paths.get(executionStateSerializable.getClassesFolderPath()));
+        executionState.setOutputFolder(Paths.get(executionStateSerializable.getOutputFolder()));
+        executionState.setDecompilerEngineId(executionStateSerializable.getDecompilerEngineId());
+        executionState.setIsOnlyFilteredFiles(executionStateSerializable.getIsOnlyFilteredFiles());
+        executionState.setFilteredFilePath(Paths.get(executionStateSerializable.getFilteredFilePath()));
+        return executionState;
+    }
 
     public Path getClassesFolderPath() {
         return classesFolderPath;

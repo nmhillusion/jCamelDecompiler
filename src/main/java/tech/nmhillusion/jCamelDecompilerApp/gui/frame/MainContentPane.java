@@ -7,6 +7,7 @@ import tech.nmhillusion.jCamelDecompilerApp.gui.CustomFileView;
 import tech.nmhillusion.jCamelDecompilerApp.gui.component.ExplainHowToFilterPane;
 import tech.nmhillusion.jCamelDecompilerApp.gui.handler.ProgressStatusUpdateHandler;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
+import tech.nmhillusion.jCamelDecompilerApp.loader.ExecutionStateLoader;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
 import tech.nmhillusion.jCamelDecompilerApp.state.ExecutionState;
 import tech.nmhillusion.n2mix.util.StringUtil;
@@ -38,6 +39,7 @@ public class MainContentPane extends JRootPane {
     private final Executor DECOMPILE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
     private final AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = new AtomicReference<>();
     private final DecompilerLoader decompilerLoader = DecompilerLoader.getInstance();
+    private final ExecutionStateLoader executionStateLoader = ExecutionStateLoader.getInstance();
 
     public MainContentPane(JFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -148,6 +150,22 @@ public class MainContentPane extends JRootPane {
         this.setContentPane(panel);
         panel.updateUI();
         panel.repaint();
+        loadState();
+    }
+
+    private void loadState() {
+        try {
+            final ExecutionState loadedState = executionStateLoader.loadState();
+            if (null != loadedState) {
+                executionState.setClassesFolderPath(loadedState.getClassesFolderPath());
+                executionState.setOutputFolder(loadedState.getOutputFolder());
+                executionState.setDecompilerEngineId(loadedState.getDecompilerEngineId());
+                executionState.setIsOnlyFilteredFiles(loadedState.getIsOnlyFilteredFiles());
+                executionState.setFilteredFilePath(loadedState.getFilteredFilePath());
+            }
+        } catch (Exception ex) {
+            getLogger(this).error("Error when load state", ex);
+        }
     }
 
     private JPanel createStatusProgressBar() {
@@ -213,6 +231,9 @@ public class MainContentPane extends JRootPane {
 
             DECOMPILE_EXECUTOR.execute(() -> {
                 try {
+                    executionStateLoader
+                            .saveState(executionState);
+
                     var outputFolder = new DecompilerEngine(executionState)
                             .execute(
                                     progressStatusUpdatableHandlerRef

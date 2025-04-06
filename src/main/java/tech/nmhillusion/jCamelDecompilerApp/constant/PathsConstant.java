@@ -15,19 +15,36 @@ import java.nio.file.Path;
  */
 public enum PathsConstant {
     LIBRARY_PATH(
-            PathHelper.getPathOfResource("decompiler")
+            PathHelper.getPathOfResource(FilenameConstant.FOLDER__LIBRARY.getFilename())
+            , true
     ),
     DECOMPILERS_CONFIG_PATH(
-            Path.of(String.valueOf(LIBRARY_PATH.getAbsolutePath()), "decompilers.config.yml")
+            Path.of(String.valueOf(LIBRARY_PATH.getAbsolutePath())
+                    , FilenameConstant.FILE__DECOMPILERS_CONFIG.getFilename()
+            )
+            , true
+    ),
+    /// ///////////////
+    EXECUTION_STATE_PATH(
+            PathHelper.getPathOfResource(FilenameConstant.FOLDER__STATE.getFilename()
+                    , FilenameConstant.FILE__EXECUTION_STATE.getFilename()
+            )
+            , false
     );
 
     private final Path absolutePath;
+    private final boolean required;
 
-    PathsConstant(Path absolutePath) {
+    PathsConstant(Path absolutePath, boolean required) {
         this.absolutePath = absolutePath;
+        this.required = required;
     }
 
     public Path getAbsolutePath() {
         return absolutePath;
+    }
+
+    public boolean getRequired() {
+        return required;
     }
 }

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 
@@ -33,21 +35,22 @@ public class Main {
                     , "Error"
                     , JOptionPane.ERROR_MESSAGE
             );
-            throw ex;
+            exitAppOnError(ex);
         }
 
         SwingUtilities.invokeLater(() -> {
             try {
                 makeGUI();
-            } catch (IOException e) {
-                getLogger(Main.class).error(e);
-                throw new RuntimeException(e);
+            } catch (IOException ex) {
+                exitAppOnError(ex);
             }
         });
     }
 
     private static void throwIfUnavailableRequiredPaths() {
-        final PathsConstant[] requiredPaths = PathsConstant.values();
+        final List<PathsConstant> requiredPaths = Arrays.stream(PathsConstant.values())
+                .filter(PathsConstant::getRequired)
+                .toList();
         for (PathsConstant requiredPath : requiredPaths) {
             if (Files.notExists(requiredPath.getAbsolutePath())) {
                 throw new IllegalStateException(String.format("Required path is not available: %s", requiredPath.getAbsolutePath()));
@@ -93,5 +96,10 @@ public class Main {
                     ImageIO.read(icStream)
             );
         }
+    }
+
+    private static void exitAppOnError(Throwable ex) {
+        getLogger(Main.class).error(ex);
+        System.exit(-1);
     }
 }
