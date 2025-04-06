@@ -96,7 +96,14 @@ public class MainContentPane extends JRootPane {
         }
 
         {
-            createDecompilerSelectionPanel(panel, rowIdx++);
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.gridheight = 1;
+            gbc.insets = new Insets(2, 2, 2, 2);
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.anchor = GridBagConstraints.LINE_START;
+            gbc.gridx = 0;
+            gbc.gridy = rowIdx++;
+            panel.add(createDecompilerSelectionPanel(), gbc);
         }
 
         {
@@ -106,7 +113,7 @@ public class MainContentPane extends JRootPane {
             gbc.gridheight = 1;
             gbc.insets = new Insets(2, 2, 2, 2);
             gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.anchor = GridBagConstraints.WEST;
+            gbc.anchor = GridBagConstraints.LINE_START;
             gbc.weighty = 0.0;
             gbc.weightx = 1.0;
             panel.add(createFilterPanel(), gbc);
@@ -435,12 +442,14 @@ public class MainContentPane extends JRootPane {
         return panel;
     }
 
-    private void createDecompilerSelectionPanel(JPanel panel, int rowIdx) {
+    private JPanel createDecompilerSelectionPanel() {
+        final JPanel panel = new JPanel(new GridBagLayout());
+
         final GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridy = rowIdx;
+        gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.insets = new Insets(0, 0, 0, 10);
+        gbc.insets = new Insets(0, 0, 0, 0);
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.LINE_START;
 
@@ -489,6 +498,8 @@ public class MainContentPane extends JRootPane {
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.gridx = 1;
         panel.add(comboBox, gbc);
+
+        return panel;
     }
 
     private JPanel createFilterPanel() {
@@ -503,7 +514,7 @@ public class MainContentPane extends JRootPane {
         gbc.weighty = 0.0;
         gbc.insets = new Insets(0, 0, 0, 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.BASELINE;
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 
         final JCheckBox isFilterCheckBox = new JCheckBox("Is Filtered by File List");
         final JPanel centralPanel = new JPanel(new GridBagLayout());
