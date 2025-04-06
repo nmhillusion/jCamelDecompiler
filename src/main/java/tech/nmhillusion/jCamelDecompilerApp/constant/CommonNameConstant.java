@@ -5,21 +5,23 @@ package tech.nmhillusion.jCamelDecompilerApp.constant;
  * <p>
  * created-by: nmhillusion
  */
-public enum FilenameConstant {
+public enum CommonNameConstant {
     FOLDER__LIBRARY("decompiler"),
     FOLDER__STATE("state"),
     FOLDER__SCRIPTS("scripts"),
     /// //////////
     FILE__DECOMPILERS_CONFIG("decompilers.config.yml"),
-    FILE__EXECUTION_STATE("executionState.ser");
+    FILE__EXECUTION_STATE("executionState.ser"),
+    /// //////////
+    ENV__APP_HOME("APP_HOME");
 
-    private final String filename;
+    private final String ename;
 
-    FilenameConstant(String filename) {
-        this.filename = filename;
+    CommonNameConstant(String ename) {
+        this.ename = ename;
     }
 
-    public String getFilename() {
-        return filename;
+    public String getEName() {
+        return ename;
     }
 }

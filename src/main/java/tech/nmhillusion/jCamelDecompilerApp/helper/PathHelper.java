@@ -1,6 +1,6 @@
 package tech.nmhillusion.jCamelDecompilerApp.helper;
 
-import tech.nmhillusion.jCamelDecompilerApp.constant.FilenameConstant;
+import tech.nmhillusion.jCamelDecompilerApp.constant.CommonNameConstant;
 import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
@@ -42,14 +42,14 @@ public abstract class PathHelper {
     }
 
     public static Path getPathOfAppHome() throws URISyntaxException {
-        final String appHomeDir = System.getenv("APP_HOME");
+        final String appHomeDir = System.getenv(CommonNameConstant.ENV__APP_HOME.getEName());
 
         getLogger(PathHelper.class)
                 .info("App Home = {}", appHomeDir);
 
         if (StringValidator.isBlank(appHomeDir)) {
             final URI resourceUri = ClassLoader.getSystemResource(
-                    FilenameConstant.FOLDER__LIBRARY.getFilename()
+                    CommonNameConstant.FOLDER__LIBRARY.getEName()
             ).toURI();
             getLogger(PathHelper.class).info("resourceUri = {}", resourceUri);
 

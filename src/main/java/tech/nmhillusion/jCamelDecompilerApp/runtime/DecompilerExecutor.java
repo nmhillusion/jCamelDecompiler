@@ -1,6 +1,6 @@
 package tech.nmhillusion.jCamelDecompilerApp.runtime;
 
-import tech.nmhillusion.jCamelDecompilerApp.constant.FilenameConstant;
+import tech.nmhillusion.jCamelDecompilerApp.constant.CommonNameConstant;
 import tech.nmhillusion.jCamelDecompilerApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompileFileModel;
@@ -79,7 +79,7 @@ public class DecompilerExecutor {
 
     public Path getExecutedScriptPath() {
         return PathHelper.getPathOfResource(
-                FilenameConstant.FOLDER__SCRIPTS.getFilename()
+                CommonNameConstant.FOLDER__SCRIPTS.getEName()
                 , decompilerEngineModel.getExecScriptFilename()
         );
     }

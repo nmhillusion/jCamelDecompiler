@@ -15,19 +15,19 @@ import java.nio.file.Path;
  */
 public enum PathsConstant {
     LIBRARY_PATH(
-            PathHelper.getPathOfResource(FilenameConstant.FOLDER__LIBRARY.getFilename())
+            PathHelper.getPathOfResource(CommonNameConstant.FOLDER__LIBRARY.getEName())
             , true
     ),
     DECOMPILERS_CONFIG_PATH(
             Path.of(String.valueOf(LIBRARY_PATH.getAbsolutePath())
-                    , FilenameConstant.FILE__DECOMPILERS_CONFIG.getFilename()
+                    , CommonNameConstant.FILE__DECOMPILERS_CONFIG.getEName()
             )
             , true
     ),
     /// ///////////////
     EXECUTION_STATE_PATH(
-            PathHelper.getPathOfResource(FilenameConstant.FOLDER__STATE.getFilename()
-                    , FilenameConstant.FILE__EXECUTION_STATE.getFilename()
+            PathHelper.getPathOfResource(CommonNameConstant.FOLDER__STATE.getEName()
+                    , CommonNameConstant.FILE__EXECUTION_STATE.getEName()
             )
             , false
     );
