@@ -172,7 +172,8 @@ public class MainContentPane extends JRootPane {
                 executionState.setFilteredFilePath(loadedState.getFilteredFilePath());
             }
         } catch (Exception ex) {
-            getLogger(this).error("Error when load state", ex);
+            getLogger(this).error("Error when load state: {} - {}", ex, ex.getMessage());
+            getLogger(this).error(ex);
         }
     }
 
@@ -607,7 +608,8 @@ public class MainContentPane extends JRootPane {
                     final Path filteredFilePath = selectedFile.toPath();
                     executionState.setFilteredFilePath(filteredFilePath);
                 } catch (Exception ex) {
-                    getLogger(this).error("Error when read content of filtered files", ex);
+                    getLogger(this).error("Error when read content of filtered files");
+                    getLogger(this).error(ex);
                 }
             }
 

@@ -26,7 +26,8 @@ public abstract class PathHelper {
             return Paths.get(StringUtil.trimWithNull(getPathOfAppHome()), resourceNames)
                     .toAbsolutePath();
         } catch (URISyntaxException e) {
-            getLogger(PathHelper.class).error("Cannot find resource: %s".formatted(Arrays.toString(resourceNames)), e);
+            getLogger(PathHelper.class).error("Cannot find resource: %s".formatted(Arrays.toString(resourceNames)));
+            getLogger(PathHelper.class).error(e);
             throw new RuntimeException("Cannot find resource: %s".formatted(Arrays.toString(resourceNames)), e);
         }
     }

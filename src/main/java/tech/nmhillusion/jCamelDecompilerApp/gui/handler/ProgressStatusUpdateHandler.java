@@ -53,7 +53,8 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
                 doc.remove(0, endOfFirstLine);
             }
         } catch (BadLocationException ex) {
-            getLogger(this).error("Error when remove first line", ex);
+            getLogger(this).error("Error when remove first line");
+            getLogger(this).error(ex);
         }
     }
 
@@ -91,7 +92,8 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
                         , getLogMessageStyle(doc, logType)
                 );
             } catch (Throwable ex) {
-                LogHelper.getLogger(this).error("Error when log message", ex);
+                LogHelper.getLogger(this).error("Error when log message");
+                LogHelper.getLogger(this).error(ex);
             }
         });
     }
