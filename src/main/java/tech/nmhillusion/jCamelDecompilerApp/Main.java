@@ -70,8 +70,7 @@ public class Main {
         final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800);
-        frame.setTitle("jCamelDecompilerApp");
-        frame.setLocationRelativeTo(null);
+        frame.setTitle("jCamelDecompiler");
         frame.setLocationByPlatform(true);
         setIconForApp(frame);
 
@@ -87,7 +86,7 @@ public class Main {
     }
 
     private static void setIconForApp(JFrame frame) throws IOException {
-        try (final InputStream icStream = Files.newInputStream(PathHelper.getPathOfResource("icon/app.png"))) {
+        try (final InputStream icStream = Files.newInputStream(PathHelper.getPathOfResource("icon/app-icon.png"))) {
             if (null == icStream) {
                 throw new IOException("App icon not found");
             }

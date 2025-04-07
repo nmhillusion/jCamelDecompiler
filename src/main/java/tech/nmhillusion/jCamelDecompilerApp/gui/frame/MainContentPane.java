@@ -61,12 +61,12 @@ public class MainContentPane extends JRootPane {
         int rowIdx = 0;
 
         {
-            final JLabel titleLabel = new JLabel("jCamelDecompilerApp");
+            final JLabel titleLabel = new JLabel("jCamelDecompiler");
             titleLabel.setFont(new Font("Calibri", Font.PLAIN, 25));
             titleLabel.setBorder(
                     BorderFactory.createMatteBorder(
                             0, 0, 1, 0
-                            , Color.decode("0xeedddd")
+                            , Color.decode("0xdddddd")
                     )
             );
 
@@ -74,7 +74,7 @@ public class MainContentPane extends JRootPane {
             gbc.gridy = rowIdx++;
             gbc.gridwidth = GridBagConstraints.REMAINDER;
             gbc.gridheight = 1;
-            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.insets = new Insets(5, 5, 15, 5);
             gbc.fill = GridBagConstraints.CENTER;
             panel.add(titleLabel, gbc);
         }
