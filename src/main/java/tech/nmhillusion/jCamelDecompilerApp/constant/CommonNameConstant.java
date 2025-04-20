@@ -12,6 +12,7 @@ public enum CommonNameConstant {
     /// //////////
     FILE__DECOMPILERS_CONFIG("decompilers.config.yml"),
     FILE__EXECUTION_STATE("executionState.ser"),
+    FILE__DECOMPLIED_LIST_OUTPUT("decompiled-file-list.txt"),
     /// //////////
     ENV__APP_HOME("APP_HOME");
 

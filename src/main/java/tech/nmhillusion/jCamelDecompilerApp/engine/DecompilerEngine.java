@@ -1,6 +1,7 @@
 package tech.nmhillusion.jCamelDecompilerApp.engine;
 
 import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
+import tech.nmhillusion.jCamelDecompilerApp.constant.CommonNameConstant;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompileFileModel;
@@ -12,7 +13,9 @@ import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
@@ -187,7 +191,26 @@ public class DecompilerEngine {
             }
         }
 
+        saveDecompiledFiles(decompileFileList, outputFolder);
+
         return outputFolder;
+    }
+
+    private void saveDecompiledFiles(List<DecompileFileModel> decompileFileList, Path outputFolder) throws IOException {
+        final String outContent = decompileFileList
+                .stream()
+                .map(DecompileFileModel::getClassFilePath)
+                .map(it -> executionState.getClassesFolderPath().relativize(it))
+                .map(StringUtil::trimWithNull)
+                .collect(Collectors.joining("\n"));
+
+        try (final OutputStream fos = Files.newOutputStream(Paths.get(
+                StringUtil.trimWithNull(outputFolder)
+                , CommonNameConstant.FILE__DECOMPLIED_LIST_OUTPUT.getEName()
+        ))) {
+            fos.write(outContent.getBytes(StandardCharsets.UTF_8));
+            fos.flush();
+        }
     }
 
     private void deleteFolderRecursive(Path dirPath) throws IOException {
