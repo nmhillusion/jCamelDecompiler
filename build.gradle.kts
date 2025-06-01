@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "tech.nmhillusion.jCamelDecompilerApp"
-version = "1.0"
+version = "2025.1.0"
 
 var appNameL = "jCamelDecompilerApp"
 var mainClassL = "tech.nmhillusion.jCamelDecompilerApp.Main"
@@ -16,7 +16,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.nmhillusion:n2mix-java:2024.9.3")
+    // https://jitpack.io/#nmhillusion/n2mix-java
+    implementation("com.github.nmhillusion:n2mix-java:2025.5.12")
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
     implementation("org.yaml:snakeyaml:2.4")
 
@@ -51,6 +52,20 @@ tasks.distZip {
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+}
+
+val generateVersionProperties by tasks.registering {
+    val propertiesFile = file("src/main/resources/config/app-info.yml")
+    outputs.file(propertiesFile)
+
+    doLast {
+        propertiesFile.parentFile.mkdirs()
+        propertiesFile.writeText("info:\n  name: ${appNameL}\n  version: ${project.version}\n")
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn(generateVersionProperties)
 }
 
 application {
