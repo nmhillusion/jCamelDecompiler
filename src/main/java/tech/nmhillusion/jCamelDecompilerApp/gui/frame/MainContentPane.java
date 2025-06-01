@@ -172,7 +172,7 @@ public class MainContentPane extends JRootPane {
                 executionState.setFilteredFilePath(loadedState.getFilteredFilePath());
             }
         } catch (Exception ex) {
-            getLogger(this).error("Error when load state: {} - {}", ex, ex.getMessage());
+            getLogger(this).error("Error when load state: {} - {}", ex.getClass().getSimpleName(), ex.getMessage());
             getLogger(this).error(ex);
         }
     }
