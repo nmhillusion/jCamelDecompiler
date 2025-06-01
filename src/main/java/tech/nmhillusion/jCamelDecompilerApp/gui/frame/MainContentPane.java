@@ -139,7 +139,7 @@ public class MainContentPane extends JRootPane {
             gbc.gridheight = GridBagConstraints.RELATIVE;
             gbc.insets = new Insets(0, 0, 0, 0);
             gbc.fill = GridBagConstraints.NONE;
-            gbc.anchor = GridBagConstraints.FIRST_LINE_END;
+            gbc.anchor = GridBagConstraints.CENTER;
             gbc.weighty = 0.0;
             gbc.weightx = 1.0;
             panel.add(createDecompileButton(), gbc);
@@ -230,11 +230,8 @@ public class MainContentPane extends JRootPane {
 
     private JButton createDecompileButton() {
         final JButton decompileButton = new JButton("Decompile");
-        final Dimension decompileButtonSize = new Dimension(200, 30);
 
         decompileButton.setBackground(Color.CYAN);
-        decompileButton.setSize(decompileButtonSize);
-        decompileButton.setPreferredSize(decompileButtonSize);
         decompileButton.addActionListener(e -> {
             getLogger(this).info("Decompile for: {}", executionState);
 
