@@ -93,6 +93,35 @@ public class DecompilerEngine {
     }
 
     public Path execute(AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef) throws Throwable {
+        if (
+                StringValidator.isBlank(
+                        StringUtil.trimWithNull(executionState.getClassesFolderPath())
+                )
+        ) {
+            throw new IllegalArgumentException("Classes folder path is null");
+        }
+
+        if (
+                StringValidator.isBlank(
+                        StringUtil.trimWithNull(executionState.getOutputFolder())
+                )
+        ) {
+            throw new IllegalArgumentException("Output folder path is null");
+        }
+
+        if (
+                executionState.getIsOnlyFilteredFiles() &&
+                        StringValidator.isBlank(
+                                StringUtil.trimWithNull(executionState.getFilteredFilePath())
+                        )
+        ) {
+            throw new IllegalArgumentException("Filtered file path is null, but isOnlyFilteredFiles is enable");
+        }
+
+        return doExecute(progressStatusUpdatableHandlerRef);
+    }
+
+    private Path doExecute(AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef) throws Throwable {
         final ProgressStatusUpdatable progressStatusUpdatableHandler = progressStatusUpdatableHandlerRef.get();
 
         doLogMessage(
