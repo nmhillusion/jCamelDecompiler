@@ -64,7 +64,7 @@ public class Main {
         ;
     }
 
-    private static <T> T getAppInfoProperty(String configKey, Class<T> class2Cast) throws IOException {
+    public static <T> T getAppInfoProperty(String configKey, Class<T> class2Cast) throws IOException {
         final Path appInfoPath = PathHelper.getPathOfResource("config/app-info.yml");
         try (final InputStream fis = Files.newInputStream(appInfoPath)) {
             return new YamlReader(fis).getProperty(configKey, class2Cast);

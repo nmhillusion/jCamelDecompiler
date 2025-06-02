@@ -118,14 +118,6 @@ public class DecompilerEngine {
         ) {
             throw new IllegalArgumentException("Output folder path is null");
         }
-        if (Files.notExists(executionState.getOutputFolder())) {
-            throw new IllegalArgumentException(
-                    MessageFormat.format(
-                            "Output folder is not exists ({0})",
-                            executionState.getOutputFolder()
-                    )
-            );
-        }
 
         if (
                 executionState.getIsOnlyFilteredFiles()
