@@ -236,6 +236,7 @@ public class MainContentPane extends JRootPane {
         final JButton decompileButton = new JButton("Decompile");
 
         decompileButton.setBackground(Color.CYAN);
+        decompileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         decompileButton.addActionListener(e -> {
             getLogger(this).info("Decompile for: {}", executionState);
 
@@ -344,6 +345,7 @@ public class MainContentPane extends JRootPane {
         panel.add(fieldInputDecompileFolder, gbc);
 
         final JButton browseButton = new JButton("Browse");
+        browseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         browseButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -423,6 +425,7 @@ public class MainContentPane extends JRootPane {
         panel.add(fieldOutputDecompileFolder, gbc);
 
         final JButton browseButton = new JButton("Browse");
+        browseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         browseButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
