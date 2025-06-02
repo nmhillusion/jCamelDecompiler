@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -92,7 +93,7 @@ public class DecompilerEngine {
         }
     }
 
-    public Path execute(AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef) throws Throwable {
+    private void validateExecutionState() {
         if (
                 StringValidator.isBlank(
                         StringUtil.trimWithNull(executionState.getClassesFolderPath())
@@ -100,6 +101,15 @@ public class DecompilerEngine {
         ) {
             throw new IllegalArgumentException("Classes folder path is null");
         }
+        if (Files.notExists(executionState.getClassesFolderPath())) {
+            throw new IllegalArgumentException(
+                    MessageFormat.format(
+                            "Classes folder is not exists ({0})",
+                            executionState.getClassesFolderPath()
+                    )
+            );
+        }
+
 
         if (
                 StringValidator.isBlank(
@@ -108,16 +118,36 @@ public class DecompilerEngine {
         ) {
             throw new IllegalArgumentException("Output folder path is null");
         }
-
-        if (
-                executionState.getIsOnlyFilteredFiles() &&
-                        StringValidator.isBlank(
-                                StringUtil.trimWithNull(executionState.getFilteredFilePath())
-                        )
-        ) {
-            throw new IllegalArgumentException("Filtered file path is null, but isOnlyFilteredFiles is enable");
+        if (Files.notExists(executionState.getOutputFolder())) {
+            throw new IllegalArgumentException(
+                    MessageFormat.format(
+                            "Output folder is not exists ({0})",
+                            executionState.getOutputFolder()
+                    )
+            );
         }
 
+        if (
+                executionState.getIsOnlyFilteredFiles()
+        ) {
+            if (StringValidator.isBlank(
+                    StringUtil.trimWithNull(executionState.getFilteredFilePath())
+            )) {
+                throw new IllegalArgumentException("Filtered file path is null, but isOnlyFilteredFiles is enable");
+            }
+            if (Files.notExists(executionState.getFilteredFilePath())) {
+                throw new IllegalArgumentException(
+                        MessageFormat.format(
+                                "Filtered file is not exists ({0}), but isOnlyFilteredFiles is enable"
+                                , executionState.getFilteredFilePath()
+                        )
+                );
+            }
+        }
+    }
+
+    public Path execute(AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef) throws Throwable {
+        validateExecutionState();
         return doExecute(progressStatusUpdatableHandlerRef);
     }
 

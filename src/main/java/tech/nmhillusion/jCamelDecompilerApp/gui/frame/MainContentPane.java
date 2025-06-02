@@ -41,6 +41,10 @@ public class MainContentPane extends JRootPane {
     private final AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = new AtomicReference<>();
     private final DecompilerLoader decompilerLoader = DecompilerLoader.getInstance();
     private final ExecutionStateLoader executionStateLoader = ExecutionStateLoader.getInstance();
+    private final JTextField fieldInputDecompileFolder = new JTextField();
+    private final JTextField fieldOutputDecompileFolder = new JTextField();
+    private final JTextField fieldFilteredFilePath = new JTextField();
+
 
     public MainContentPane(JFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -237,6 +241,19 @@ public class MainContentPane extends JRootPane {
 
             DECOMPILE_EXECUTOR.execute(() -> {
                 try {
+                    executionState
+                            .setClassesFolderPath(
+                                    Path.of(fieldInputDecompileFolder.getText())
+                            )
+                            .setOutputFolder(
+                                    Path.of(fieldOutputDecompileFolder.getText())
+                            )
+                            .setFilteredFilePath(
+                                    Path.of(fieldFilteredFilePath.getText())
+                            )
+                    ;
+
+
                     executionStateLoader
                             .saveState(executionState);
 
@@ -304,13 +321,10 @@ public class MainContentPane extends JRootPane {
         gbc.gridx = 0;
         panel.add(new JLabel("Folder to decompile: "), gbc);
 
-        final JTextField inputField = new JTextField();
-//        inputField.setPreferredSize(new Dimension(200, 20));
-        inputField.setSize(new Dimension(200, 20));
-        inputField.setMinimumSize(new Dimension(200, 20));
-        inputField.setEnabled(false);
+        fieldInputDecompileFolder.setSize(new Dimension(200, 20));
+        fieldInputDecompileFolder.setMinimumSize(new Dimension(200, 20));
 
-        inputField.setText(
+        fieldInputDecompileFolder.setText(
                 StringUtil.trimWithNull(executionState.getClassesFolderPath())
         );
 //        {
@@ -327,7 +341,7 @@ public class MainContentPane extends JRootPane {
         gbc.gridwidth = 1;
         gbc.weightx = 1.0;
         gbc.gridx = 1;
-        panel.add(inputField, gbc);
+        panel.add(fieldInputDecompileFolder, gbc);
 
         final JButton browseButton = new JButton("Browse");
         browseButton.addActionListener(e -> {
@@ -346,7 +360,7 @@ public class MainContentPane extends JRootPane {
                 );
             }
 
-            inputField.setText(
+            fieldInputDecompileFolder.setText(
                     String.valueOf(executionState.getClassesFolderPath())
             );
         });
@@ -386,12 +400,10 @@ public class MainContentPane extends JRootPane {
         gbc.gridx = 0;
         panel.add(new JLabel("Output folder: "), gbc);
 
-        final JTextField inputField = new JTextField();
-        inputField.setSize(new Dimension(200, 20));
-        inputField.setMinimumSize(new Dimension(200, 20));
-        inputField.setEnabled(false);
+        fieldOutputDecompileFolder.setSize(new Dimension(200, 20));
+        fieldOutputDecompileFolder.setMinimumSize(new Dimension(200, 20));
 
-        inputField.setText(
+        fieldOutputDecompileFolder.setText(
                 StringUtil.trimWithNull(executionState.getOutputFolder())
         );
 //        {
@@ -408,7 +420,7 @@ public class MainContentPane extends JRootPane {
         gbc.gridwidth = 1;
         gbc.weightx = 1.0;
         gbc.gridx = 1;
-        panel.add(inputField, gbc);
+        panel.add(fieldOutputDecompileFolder, gbc);
 
         final JButton browseButton = new JButton("Browse");
         browseButton.addActionListener(e -> {
@@ -427,7 +439,7 @@ public class MainContentPane extends JRootPane {
                 );
             }
 
-            inputField.setText(
+            fieldInputDecompileFolder.setText(
                     String.valueOf(executionState.getOutputFolder())
             );
         });
@@ -516,7 +528,6 @@ public class MainContentPane extends JRootPane {
 
         final JCheckBox isFilterCheckBox = new JCheckBox("Is Filtered by File List");
         final JPanel centralPanel = new JPanel(new GridBagLayout());
-        final JTextField filterField = new JTextField();
         final JButton browseButton = new JButton("Browse");
 
         isFilterCheckBox.addItemListener(evt -> {
@@ -542,17 +553,16 @@ public class MainContentPane extends JRootPane {
         panel.add(isFilterCheckBox, gbc);
 
         {
-            filterField.setPreferredSize(new Dimension(200, 20));
-            filterField.setSize(new Dimension(200, 20));
-            filterField.setMaximumSize(new Dimension(200, 20));
-            filterField.setToolTipText("A text file contains list of paths to filter, separated by new line");
-            filterField.setEnabled(false);
+            fieldFilteredFilePath.setPreferredSize(new Dimension(200, 20));
+            fieldFilteredFilePath.setSize(new Dimension(200, 20));
+            fieldFilteredFilePath.setMaximumSize(new Dimension(200, 20));
+            fieldFilteredFilePath.setToolTipText("A text file contains list of paths to filter, separated by new line");
 
             gbc.gridy = 0;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
             gbc.gridx = 1;
-            centralPanel.add(filterField, gbc);
+            centralPanel.add(fieldFilteredFilePath, gbc);
 
             final JLabel explainLink = new JLabel("<html><a href=''>How to filter</a></html>");
             explainLink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -610,7 +620,7 @@ public class MainContentPane extends JRootPane {
                 }
             }
 
-            filterField.setText(
+            fieldFilteredFilePath.setText(
                     StringUtil.trimWithNull(executionState.getFilteredFilePath())
             );
         });
@@ -624,7 +634,7 @@ public class MainContentPane extends JRootPane {
         isFilterCheckBox.setSelected(
                 executionState.getIsOnlyFilteredFiles()
         );
-        filterField.setText(
+        fieldFilteredFilePath.setText(
                 StringUtil.trimWithNull(executionState.getFilteredFilePath())
         );
 
