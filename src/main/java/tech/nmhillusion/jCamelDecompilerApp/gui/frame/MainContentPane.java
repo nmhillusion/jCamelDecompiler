@@ -357,6 +357,10 @@ public class MainContentPane extends JRootPane {
             final int resultCode = fileChooser.showOpenDialog(null);
 
             if (JFileChooser.APPROVE_OPTION == resultCode) {
+                getLogger(this).info("Selected filePath for classes folder: {}"
+                        , fileChooser.getSelectedFile()
+                );
+
                 executionState.setClassesFolderPath(
                         fileChooser.getSelectedFile().toPath()
                 );
@@ -437,12 +441,16 @@ public class MainContentPane extends JRootPane {
             final int resultCode = fileChooser.showOpenDialog(null);
 
             if (JFileChooser.APPROVE_OPTION == resultCode) {
+                getLogger(this).info("Selected filePath for output folder: {}"
+                        , fileChooser.getSelectedFile()
+                );
+
                 executionState.setOutputFolder(
                         fileChooser.getSelectedFile().toPath()
                 );
             }
 
-            fieldInputDecompileFolder.setText(
+            fieldOutputDecompileFolder.setText(
                     String.valueOf(executionState.getOutputFolder())
             );
         });
