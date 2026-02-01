@@ -1,3 +1,5 @@
 - [x] fix loading logs to the end when updating
 - [x] check delete old files before start new decompilation. → already delete recursively the target folder.
 - [x] logs view should be read-only
+- [ ] checking java when start app, using .bat file, show error if not set java
+- [ ] check local jdk folder also for java path
