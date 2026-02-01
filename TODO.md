@@ -1,0 +1,3 @@
+- [ ] fix loading logs to the end when updating
+- [ ] check delete old files before start new decompilation
+- [ ] logs view should be read-only
