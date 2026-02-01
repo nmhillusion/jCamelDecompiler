@@ -80,6 +80,8 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
                         removeFirstLineOfLogView();
                         lineCount = ViewHelper.getLineCount(logView);
                     }
+
+                    verticalScrollBar.setValue(verticalScrollBar.getMaximum());
                 }
 
                 final StyledDocument doc = logView.getStyledDocument();
