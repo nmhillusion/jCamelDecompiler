@@ -80,8 +80,6 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
                         removeFirstLineOfLogView();
                         lineCount = ViewHelper.getLineCount(logView);
                     }
-
-                    verticalScrollBar.setValue(verticalScrollBar.getMaximum());
                 }
 
                 final StyledDocument doc = logView.getStyledDocument();
@@ -93,6 +91,9 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
                                 .replace("{logMessage}", logMsg)
                         , getLogMessageStyle(doc, logType)
                 );
+
+                verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+                logView.setCaretPosition(doc.getLength());
             } catch (Throwable ex) {
                 LogHelper.getLogger(this).error("Error when log message");
                 LogHelper.getLogger(this).error(ex);
