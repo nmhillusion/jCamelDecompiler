@@ -77,7 +77,12 @@ distributions {
     main {
         distributionBaseName = appNameL
         contents {
-            from("src/main/resources")
+            from("src/main/resources") {
+                exclude("scripts")
+            }
+            into("bin") {
+                from("src/main/resources/scripts/check_java.bat")
+            }
         }
     }
 }
