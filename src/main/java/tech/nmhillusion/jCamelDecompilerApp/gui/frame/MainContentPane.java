@@ -201,6 +201,7 @@ public class MainContentPane extends JRootPane {
         }
 
         final JTextPane logView = new JTextPane();
+        logView.setEditable(false);
         final JScrollPane logScrollPane = new JScrollPane(logView
                 , ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
                 , ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
