@@ -1,3 +1,3 @@
 - [x] fix loading logs to the end when updating
-- [ ] check delete old files before start new decompilation
+- [x] check delete old files before start new decompilation. → already delete recursively the target folder.
 - [x] logs view should be read-only
