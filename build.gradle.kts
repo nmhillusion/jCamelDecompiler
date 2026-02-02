@@ -1,3 +1,5 @@
+import org.gradle.jvm.application.tasks.CreateStartScripts
+
 plugins {
     id("java")
     id("application")
@@ -73,6 +75,10 @@ application {
     applicationName = appNameL
 }
 
+tasks.named<CreateStartScripts>("startScripts") {
+    applicationName = "_jCamelDecompiler"
+}
+
 distributions {
     main {
         distributionBaseName = appNameL
@@ -81,7 +87,7 @@ distributions {
                 exclude("scripts")
             }
             into("bin") {
-                from("src/main/resources/scripts/check_java.bat")
+                from("src/main/resources/scripts/run_app.bat")
             }
         }
     }
