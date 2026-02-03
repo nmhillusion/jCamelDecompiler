@@ -1,5 +1,3 @@
-import org.gradle.jvm.application.tasks.CreateStartScripts
-
 plugins {
     id("java")
     id("application")
@@ -7,7 +5,7 @@ plugins {
 }
 
 group = "tech.nmhillusion.jCamelDecompilerApp"
-version = "2025.1.0"
+version = "2026.1.0"
 
 var appNameL = "jCamelDecompilerApp"
 var mainClassL = "tech.nmhillusion.jCamelDecompilerApp.Main"
@@ -75,10 +73,6 @@ application {
     applicationName = appNameL
 }
 
-tasks.named<CreateStartScripts>("startScripts") {
-    applicationName = "_jCamelDecompiler"
-}
-
 distributions {
     main {
         distributionBaseName = appNameL
@@ -87,7 +81,7 @@ distributions {
                 exclude("scripts")
             }
             into("bin") {
-                from("src/main/resources/scripts/run_app.bat")
+                from("src/main/resources/scripts/startup.bat")
             }
         }
     }
