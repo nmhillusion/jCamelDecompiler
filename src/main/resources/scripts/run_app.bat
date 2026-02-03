@@ -14,7 +14,7 @@ if exist "%LOCAL_JAVA%" (
         set "JAVA_CMD=java"
         echo [INFO] Local JDK not found. Using system PATH.
     ) else (
-        echo [ERROR] Java was not found in the local \jdk\ folder OR system PATH.
+        call :ShowError "[ERROR] Java was not found in the local \jdk\ folder OR system PATH." "JDK Error"
         pause
         exit /b 1
     )
@@ -34,8 +34,8 @@ for /f "delims=." %%v in ("%full_version%") do (
 :: 5. Output results
 echo Java detected: %full_version%; major version: %major_version%
 
-if "%major_version%" neq "21" (
-    echo [!] Warning: You are on Java %major_version%. This is not Java 25. Java 25 is required to run this app.
+if %major_version% LSS 21 (
+    call :ShowError "[ERROR] You are on Java %major_version%. This is not Java >= 21. Java 21 or higher is required to run this app." "Runtime Error"
     exit /b 1
 )
 
@@ -44,11 +44,19 @@ if "%major_version%" neq "21" (
 set "CURRENT_JAVA_EXE=%JAVA_CMD%"
 
 :: 7. CALL THE NEXT SCRIPT
-if exist "%~dp0run_app.bat" (
-    echo [EXEC] Calling run_app.bat...
-    call "%~dp0run_app.bat"
+set "app_name=jCamelDecompilerApp.bat"
+if exist "%~dp0%app_name%" (
+    echo [EXEC] Calling %~dp0%app_name%...
+    call "%~dp0%app_name%"
+    exit /b 0
 ) else (
-    echo [ERROR] run_app.bat not found in %~dp0
+    call :ShowError "[ERROR] %~dp0%app_name% not found in %~dp0" "Error"
+    exit /b 1
 )
 
-pause
+:: --- Function Definition ---
+:ShowError
+:: %~1 is the first argument (message)
+:: %~2 is the second argument (title)
+powershell -Command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('%~1', '%~2', 'OK', 'Error')"
+goto :eof
