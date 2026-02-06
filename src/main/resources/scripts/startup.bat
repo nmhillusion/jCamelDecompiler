@@ -6,8 +6,9 @@ set "LOCAL_JAVA=%~dp0jdk\bin\java.exe"
 
 :: 2. Check local folder FIRST, then fall back to system PATH
 if exist "%LOCAL_JAVA%" (
-    set "JAVA_CMD="%LOCAL_JAVA%""
+    set "JAVA_CMD=%LOCAL_JAVA%"
     echo [INFO] Found local JDK in: %~dp0jdk
+    echo Local java detected: !JAVA_CMD!
 ) else (
     where java >nul 2>nul
     if !errorlevel! equ 0 (
