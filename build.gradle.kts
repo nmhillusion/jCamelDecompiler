@@ -78,7 +78,7 @@ distributions {
         distributionBaseName = appNameL
         contents {
             from("src/main/resources") {
-                exclude("scripts")
+                exclude("scripts/startup.bat")
             }
             into("bin") {
                 from("src/main/resources/scripts/startup.bat")
