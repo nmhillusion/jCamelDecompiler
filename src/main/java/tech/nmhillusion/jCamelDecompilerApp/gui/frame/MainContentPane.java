@@ -410,11 +410,11 @@ public class MainContentPane extends JRootPane {
                 executionState.setClassesFolderPath(
                         fileChooser.getSelectedFile().toPath()
                 );
-            }
 
-            fieldInputDecompileFolder.setText(
-                    String.valueOf(executionState.getClassesFolderPath())
-            );
+                fieldInputDecompileFolder.setText(
+                        String.valueOf(executionState.getClassesFolderPath())
+                );
+            }
         });
 
         gbc.gridwidth = 1;
@@ -494,11 +494,11 @@ public class MainContentPane extends JRootPane {
                 executionState.setOutputFolder(
                         fileChooser.getSelectedFile().toPath()
                 );
-            }
 
-            fieldOutputDecompileFolder.setText(
-                    String.valueOf(executionState.getOutputFolder())
-            );
+                fieldOutputDecompileFolder.setText(
+                        String.valueOf(executionState.getOutputFolder())
+                );
+            }
         });
 
         gbc.gridwidth = 1;
@@ -671,15 +671,15 @@ public class MainContentPane extends JRootPane {
                 try {
                     final Path filteredFilePath = selectedFile.toPath();
                     executionState.setFilteredFilePath(filteredFilePath);
+
+                    fieldFilteredFilePath.setText(
+                            StringUtil.trimWithNull(executionState.getFilteredFilePath())
+                    );
                 } catch (Exception ex) {
                     getLogger(this).error("Error when read content of filtered files");
                     getLogger(this).error(ex);
                 }
             }
-
-            fieldFilteredFilePath.setText(
-                    StringUtil.trimWithNull(executionState.getFilteredFilePath())
-            );
         });
 
         gbc.gridwidth = 1;
