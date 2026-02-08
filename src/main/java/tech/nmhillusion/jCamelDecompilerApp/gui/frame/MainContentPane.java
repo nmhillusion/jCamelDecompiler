@@ -1,5 +1,6 @@
 package tech.nmhillusion.jCamelDecompilerApp.gui.frame;
 
+import tech.nmhillusion.jCamelDecompilerApp.Main;
 import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 import tech.nmhillusion.jCamelDecompilerApp.engine.DecompilerEngine;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
@@ -158,7 +160,7 @@ public class MainContentPane extends JRootPane {
             gbc.insets = new Insets(8, 0, 8, 0);
             gbc.fill = GridBagConstraints.BOTH;
             gbc.anchor = GridBagConstraints.PAGE_END;
-            panel.add(createStatusProgressBar(), gbc);
+            panel.add(createStatusProgressBarAndLogView(), gbc);
         }
         this.setContentPane(panel);
         panel.updateUI();
@@ -181,7 +183,7 @@ public class MainContentPane extends JRootPane {
         }
     }
 
-    private JPanel createStatusProgressBar() {
+    private JPanel createStatusProgressBarAndLogView() {
         final JPanel panel = new JPanel(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
@@ -221,6 +223,21 @@ public class MainContentPane extends JRootPane {
             );
         }
 
+        {
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.weightx = 1.0;
+            gbc.weighty = 0.0;
+            gbc.anchor = GridBagConstraints.LAST_LINE_END;
+
+            panel.add(
+                    buildAppCreditPanel()
+                    , gbc
+            );
+        }
+
         progressStatusUpdatableHandlerRef.set(
                 new ProgressStatusUpdateHandler(
                         progressBar
@@ -231,6 +248,40 @@ public class MainContentPane extends JRootPane {
         panel.setBackground(Color.decode("#dddddd"));
 
         return panel;
+    }
+
+    private JLabel buildAppCreditPanel() {
+        try {
+            final String appAuthor = Main.getAppInfoProperty(
+                    "info.author", String.class
+            );
+
+            final String appVersion = Main.getAppInfoProperty(
+                    "info.version", String.class
+            );
+
+            final JLabel resultPanel = new JLabel(
+                    MessageFormat.format(
+                            "@{0} v{1}"
+                            , appAuthor
+                            , appVersion
+                    )
+                    , SwingConstants.RIGHT);
+
+            resultPanel.setForeground(Color.decode("#888888"));
+            resultPanel.setFont(
+                    new Font("Calibri", Font.ITALIC, 12)
+            );
+            resultPanel.setBorder(
+                    BorderFactory.createEmptyBorder(
+                            3, 3, 3, 3
+                    )
+            );
+
+            return resultPanel;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private JButton createDecompileButton() {

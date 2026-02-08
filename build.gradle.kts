@@ -60,7 +60,7 @@ val generateVersionProperties by tasks.registering {
 
     doLast {
         propertiesFile.parentFile.mkdirs()
-        propertiesFile.writeText("info:\n  name: ${appNameL}\n  version: ${project.version}\n")
+        propertiesFile.writeText("info:\n  name: ${appNameL}\n  version: ${project.version}\n  author: nmhillusion\n")
     }
 }
 
