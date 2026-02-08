@@ -35,8 +35,10 @@ for /f "delims=." %%v in ("%full_version%") do (
 :: 5. Output results
 echo Java detected: %full_version%; major version: %major_version%
 
-if %major_version% LSS 21 (
-    call :ShowError "[ERROR] You are on Java %major_version%. This is not Java >= 21. Java 21 or higher is required to run this app." "Runtime Error"
+set "REQUIRED_JDK_VERSION=21"
+
+if %major_version% LSS %REQUIRED_JDK_VERSION% (
+    call :ShowError "[ERROR] You are on Java %full_version%. Java version %REQUIRED_JDK_VERSION% or higher is required to run this app." "Runtime Error"
     exit /b 1
 )
 
@@ -45,13 +47,13 @@ if %major_version% LSS 21 (
 set "CURRENT_JAVA_EXE=%JAVA_CMD%"
 
 :: 7. CALL THE NEXT SCRIPT
-set "app_name=jCamelDecompilerApp.bat"
-if exist "%~dp0%app_name%" (
-    echo [EXEC] Calling %~dp0%app_name%...
+set "app_name=jCamelDecompilerApp"
+if exist "%~dp0%app_name%.bat" (
+    echo [EXEC] Calling %~dp0%app_name%.bat ...
     call "%~dp0%app_name%"
     exit /b 0
 ) else (
-    call :ShowError "[ERROR] %~dp0%app_name% not found in %~dp0" "Error"
+    call :ShowError "[ERROR] %~dp0%app_name%.bat not found in %~dp0" "Error"
     exit /b 1
 )
 
