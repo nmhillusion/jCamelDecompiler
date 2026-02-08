@@ -1,5 +1,6 @@
 package tech.nmhillusion.jCamelDecompilerApp.engine;
 
+import tech.nmhillusion.jCamelDecompilerApp.actionable.LogUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.constant.CommonNameConstant;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
@@ -22,6 +23,7 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -84,12 +86,12 @@ public class DecompilerEngine {
         return Files.createDirectories(outItemPath);
     }
 
-    private void doLogMessage(ProgressStatusUpdatable progressStatusUpdatableHandler, LogType logType, String logMessage) throws InterruptedException, InvocationTargetException {
+    private void doLogMessage(LogUpdatable logUpdatable, LogType logType, String logMessage) throws InterruptedException, InvocationTargetException {
         getLogger(this).info(
                 logMessage
         );
-        if (null != progressStatusUpdatableHandler) {
-            progressStatusUpdatableHandler.onLogMessage(logType, logMessage);
+        if (null != logUpdatable) {
+            logUpdatable.onLogMessage(logType, logMessage);
         }
     }
 
@@ -138,16 +140,21 @@ public class DecompilerEngine {
         }
     }
 
-    public Path execute(AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef) throws Throwable {
+    public Path execute(AtomicReference<LogUpdatable> logUpdatableHandlerRef,
+                        AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
         validateExecutionState();
-        return doExecute(progressStatusUpdatableHandlerRef);
+        return doExecute(
+                logUpdatableHandlerRef
+                , progressStatusUpdatableHandler
+        );
     }
 
-    private Path doExecute(AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef) throws Throwable {
-        final ProgressStatusUpdatable progressStatusUpdatableHandler = progressStatusUpdatableHandlerRef.get();
+    private Path doExecute(AtomicReference<LogUpdatable> logUpdatableRef,
+                           AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
+        final LogUpdatable logUpdatableHandler = logUpdatableRef.get();
 
         doLogMessage(
-                progressStatusUpdatableHandler
+                logUpdatableHandler
                 , LogType.INFO
                 , "do runtime decoding on state: {state}".replace("{state}", StringUtil.trimWithNull(executionState))
         );
@@ -175,20 +182,20 @@ public class DecompilerEngine {
         final DecompilerExecutor decompilerExecutor = new DecompilerExecutor(decompilerEngineModel);
 
         doLogMessage(
-                progressStatusUpdatableHandler
+                logUpdatableHandler
                 , LogType.INFO
                 , "Executing on executor: %s".formatted(decompilerExecutor)
         );
 
         final int decompileFileCount = decompileFileList.size();
         doLogMessage(
-                progressStatusUpdatableHandler
+                logUpdatableHandler
                 , LogType.INFO
                 , "There are {fileCount} class files to decompile in total.".replace("{fileCount}",
                         String.valueOf(decompileFileCount))
         );
 
-        doLogMessage(progressStatusUpdatableHandler
+        doLogMessage(logUpdatableHandler
                 , LogType.WARN
                 , "Cleaning output folder"
         );
@@ -203,7 +210,7 @@ public class DecompilerEngine {
                     )
                     .replace("\\", "/");
             doLogMessage(
-                    progressStatusUpdatableHandler
+                    logUpdatableHandler
                     , LogType.INFO
                     , "Decompiling for {filePath}"
                             .replace("{filePath}"
@@ -221,25 +228,26 @@ public class DecompilerEngine {
             final int exitCode = decompilerExecutor.execScriptFile(
                     decompileItem
                     , msg -> doLogMessage(
-                            progressStatusUpdatableHandler
+                            logUpdatableHandler
                             , LogType.DEBUG
                             , msg
                     )
             );
 
             doLogMessage(
-                    progressStatusUpdatableHandler
-                    , LogType.INFO
+                    logUpdatableHandler
+                    , 0 == exitCode ? LogType.INFO : LogType.ERROR
                     , "Decompiled result: {exitCode} for {filePath}"
                             .replace("{exitCode}", String.valueOf(exitCode))
                             .replace("{filePath}", currentExecClassFilePath)
             );
 
-            if (null != progressStatusUpdatableHandler) {
-                progressStatusUpdatableHandler.onUpdateProgressValue(
-                        Math.floorDivExact((fileIdx + 1) * 100, decompileFileCount)
-                );
-            }
+            final ProgressStatusUpdatable progressStatusUpdatable = Optional.ofNullable(progressStatusUpdatableHandler)
+                    .map(AtomicReference::get)
+                    .orElseThrow();
+            progressStatusUpdatable.onUpdateProgressValue(
+                    Math.floorDivExact((fileIdx + 1) * 100, decompileFileCount)
+            );
         }
 
         saveDecompiledFiles(decompileFileList, outputFolder);

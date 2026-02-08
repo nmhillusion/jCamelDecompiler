@@ -1,11 +1,13 @@
 package tech.nmhillusion.jCamelDecompilerApp.gui.frame;
 
 import tech.nmhillusion.jCamelDecompilerApp.Main;
+import tech.nmhillusion.jCamelDecompilerApp.actionable.LogUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 import tech.nmhillusion.jCamelDecompilerApp.engine.DecompilerEngine;
 import tech.nmhillusion.jCamelDecompilerApp.gui.CustomFileView;
 import tech.nmhillusion.jCamelDecompilerApp.gui.component.ExplainHowToFilterPane;
+import tech.nmhillusion.jCamelDecompilerApp.gui.handler.LogUpdateHandler;
 import tech.nmhillusion.jCamelDecompilerApp.gui.handler.ProgressStatusUpdateHandler;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecompilerApp.loader.ExecutionStateLoader;
@@ -41,6 +43,7 @@ public class MainContentPane extends JRootPane {
     private final ExecutionState executionState = new ExecutionState();
     private final Executor DECOMPILE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
     private final AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = new AtomicReference<>();
+    private final AtomicReference<LogUpdatable> logUpdatableHandlerRef = new AtomicReference<>();
     private final DecompilerLoader decompilerLoader = DecompilerLoader.getInstance();
     private final ExecutionStateLoader executionStateLoader = ExecutionStateLoader.getInstance();
     private final JTextField fieldInputDecompileFolder = new JTextField();
@@ -52,7 +55,7 @@ public class MainContentPane extends JRootPane {
         this.mainFrame = mainFrame;
         loadState();
 
-        this.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        this.setBorder(BorderFactory.createEmptyBorder(8, 8, 0, 8));
 
         final JPanel panel = new JPanel();
         panel.setBorder(BorderFactory.createEmptyBorder());
@@ -142,10 +145,9 @@ public class MainContentPane extends JRootPane {
             gbc.gridx = 2;
             gbc.gridy = rowIdx++;
             gbc.gridwidth = 3;
-            gbc.gridheight = GridBagConstraints.RELATIVE;
+            gbc.gridheight = 1;
             gbc.insets = new Insets(0, 0, 0, 0);
             gbc.fill = GridBagConstraints.NONE;
-            gbc.anchor = GridBagConstraints.CENTER;
             gbc.weighty = 0.0;
             gbc.weightx = 1.0;
             panel.add(createDecompileButton(), gbc);
@@ -155,13 +157,36 @@ public class MainContentPane extends JRootPane {
             gbc.gridx = 0;
             gbc.gridy = rowIdx++;
             gbc.gridwidth = 3;
-            gbc.gridheight = 0;
+            gbc.gridheight = 1;
+            gbc.insets = new Insets(8, 0, 8, 0);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.weighty = 0;
+            panel.add(createStatusProgressBar(), gbc);
+        }
+
+        {
+            gbc.gridx = 0;
+            gbc.gridy = rowIdx++;
+            gbc.gridwidth = 3;
+            gbc.gridheight = 1;
             gbc.weighty = 1.0;
             gbc.insets = new Insets(8, 0, 8, 0);
             gbc.fill = GridBagConstraints.BOTH;
-            gbc.anchor = GridBagConstraints.PAGE_END;
-            panel.add(createStatusProgressBarAndLogView(), gbc);
+            panel.add(createLogView(), gbc);
         }
+
+        {
+            gbc.gridx = 0;
+            gbc.gridy = rowIdx++;
+            gbc.gridwidth = 3;
+            gbc.gridheight = 1;
+            gbc.weighty = 0.0;
+            gbc.insets = new Insets(0, 0, 0, 0);
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.anchor = GridBagConstraints.LINE_END;
+            panel.add(buildAppCreditPanel(), gbc);
+        }
+
         this.setContentPane(panel);
         panel.updateUI();
         panel.repaint();
@@ -183,71 +208,39 @@ public class MainContentPane extends JRootPane {
         }
     }
 
-    private JPanel createStatusProgressBarAndLogView() {
-        final JPanel panel = new JPanel(new GridBagLayout());
-        final GridBagConstraints gbc = new GridBagConstraints();
+    private JPanel createStatusProgressBar() {
+        final JPanel panel = new JPanel(new BorderLayout());
 
         final JProgressBar progressBar = new JProgressBar(0, 100);
-        {
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.gridwidth = GridBagConstraints.REMAINDER;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weightx = 1.0;
-            gbc.weighty = 0.0;
 
-            panel.add(
-                    progressBar
-                    , gbc
-            );
-        }
+        progressStatusUpdatableHandlerRef.set(
+                new ProgressStatusUpdateHandler(
+                        progressBar
+                )
+        );
 
+        panel.add(progressBar, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private JScrollPane createLogView() {
         final JTextPane logView = new JTextPane();
         logView.setEditable(false);
         final JScrollPane logScrollPane = new JScrollPane(logView
                 , ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
                 , ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        {
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            gbc.gridwidth = GridBagConstraints.REMAINDER;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.weightx = 1.0;
-            gbc.weighty = 1.0;
 
-            logView.setAutoscrolls(true);
+        logView.setAutoscrolls(true);
 
-            panel.add(
-                    logScrollPane
-                    , gbc
-            );
-        }
-
-        {
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            gbc.gridwidth = GridBagConstraints.REMAINDER;
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.weightx = 1.0;
-            gbc.weighty = 0.0;
-            gbc.anchor = GridBagConstraints.LAST_LINE_END;
-
-            panel.add(
-                    buildAppCreditPanel()
-                    , gbc
-            );
-        }
-
-        progressStatusUpdatableHandlerRef.set(
-                new ProgressStatusUpdateHandler(
-                        progressBar
-                        , logView
+        logUpdatableHandlerRef.set(
+                new LogUpdateHandler(
+                        logView
                         , logScrollPane
                 )
         );
-        panel.setBackground(Color.decode("#dddddd"));
 
-        return panel;
+        return logScrollPane;
     }
 
     private JLabel buildAppCreditPanel() {
@@ -312,7 +305,8 @@ public class MainContentPane extends JRootPane {
 
                     var outputFolder = new DecompilerEngine(executionState)
                             .execute(
-                                    progressStatusUpdatableHandlerRef
+                                    logUpdatableHandlerRef
+                                    , progressStatusUpdatableHandlerRef
                             );
 
                     doLogMessageUI(LogType.WARN
@@ -337,7 +331,7 @@ public class MainContentPane extends JRootPane {
     }
 
     private void onDoneDecompilation(Path outputFolder) throws IOException {
-        final ProgressStatusUpdatable handler = progressStatusUpdatableHandlerRef.get();
+        final LogUpdatable handler = logUpdatableHandlerRef.get();
 
         if (null != handler) {
             handler.onDone(
@@ -348,7 +342,7 @@ public class MainContentPane extends JRootPane {
     }
 
     private void doLogMessageUI(LogType logType, String logMessage) throws InterruptedException, InvocationTargetException {
-        final ProgressStatusUpdatable handler = progressStatusUpdatableHandlerRef.get();
+        final LogUpdatable handler = logUpdatableHandlerRef.get();
 
         if (null != handler) {
             handler.onLogMessage(logType, logMessage);
