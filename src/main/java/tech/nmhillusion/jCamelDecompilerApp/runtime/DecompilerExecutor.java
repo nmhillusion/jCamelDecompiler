@@ -9,6 +9,8 @@ import tech.nmhillusion.n2mix.type.function.ThrowableVoidFunction;
 import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
+import java.io.BufferedReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeMap;
@@ -63,8 +65,16 @@ public class DecompilerExecutor {
                 )
         );
 
-        final Process process_ = Runtime.getRuntime()
-                .exec(cmdArray);
+        final ProcessBuilder processBuilder = new ProcessBuilder(cmdArray);
+        processBuilder.redirectErrorStream(true);
+        final Process process_ = processBuilder.start();
+
+        try (final BufferedReader bufferedReader = process_.inputReader(StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                logFunction.throwableVoidApply(line);
+            }
+        }
 
         final int exitCode = process_.waitFor();
 

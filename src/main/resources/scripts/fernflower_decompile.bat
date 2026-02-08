@@ -9,4 +9,10 @@ for %%I in ("%OUTPUT_FILE%") do (
 
 @REM Run Decompiler to decompile the class file
 java -jar %EXEC_LIB_PATH% %CLASS_FILE% %OUTPUT_DIR%
-@REM java -jar $PROCYON_JAR $CLASS_FILE
+
+@REM ============ debug start: uncomment three lines below if you want to debug: run command and waiting for you to check
+@REM start /wait "" cmd.exe /c "java -jar %EXEC_LIB_PATH% %CLASS_FILE% %OUTPUT_DIR% & pause"
+@REM echo JAR has finished. Exiting batch file.
+@REM exit /b %errorlevel%
+@REM ============ debug end
+

@@ -12,5 +12,5 @@ decompilers:
   - id: fernFlower # https://github.com/JetBrains/fernflower
     name: FernFlower Decompiler (Decompiler inside Intellij IDEA)
     options: ""
-    libFilename: "fernflower_20260131.jar"
+    libFilename: "fernflower_20260131_f44d7ae2.jar"
     execScriptFilename: "fernflower_decompile.bat"
