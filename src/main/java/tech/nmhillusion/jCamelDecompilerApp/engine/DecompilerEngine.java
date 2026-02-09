@@ -6,6 +6,7 @@ import tech.nmhillusion.jCamelDecompilerApp.constant.CommonNameConstant;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompileFileModel;
+import tech.nmhillusion.jCamelDecompilerApp.model.DecompileResultModel;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
 import tech.nmhillusion.jCamelDecompilerApp.runtime.DecompilerExecutor;
 import tech.nmhillusion.jCamelDecompilerApp.state.ExecutionState;
@@ -140,8 +141,8 @@ public class DecompilerEngine {
         }
     }
 
-    public Path execute(AtomicReference<LogUpdatable> logUpdatableHandlerRef,
-                        AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
+    public DecompileResultModel execute(AtomicReference<LogUpdatable> logUpdatableHandlerRef,
+                                        AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
         validateExecutionState();
         return doExecute(
                 logUpdatableHandlerRef
@@ -149,8 +150,9 @@ public class DecompilerEngine {
         );
     }
 
-    private Path doExecute(AtomicReference<LogUpdatable> logUpdatableRef,
-                           AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
+    private DecompileResultModel doExecute(AtomicReference<LogUpdatable> logUpdatableRef,
+                                           AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
+        final DecompileResultModel decompileResult = new DecompileResultModel();
         final LogUpdatable logUpdatableHandler = logUpdatableRef.get();
 
         doLogMessage(
@@ -234,9 +236,11 @@ public class DecompilerEngine {
                     )
             );
 
+            final boolean isExecutionSuccess = 0 == exitCode;
+
             doLogMessage(
                     logUpdatableHandler
-                    , 0 == exitCode ? LogType.INFO : LogType.ERROR
+                    , isExecutionSuccess ? LogType.INFO : LogType.ERROR
                     , "Decompiled result: {exitCode} for {filePath}"
                             .replace("{exitCode}", String.valueOf(exitCode))
                             .replace("{filePath}", currentExecClassFilePath)
@@ -248,11 +252,18 @@ public class DecompilerEngine {
             progressStatusUpdatable.onUpdateProgressValue(
                     Math.floorDivExact((fileIdx + 1) * 100, decompileFileCount)
             );
+
+            if (isExecutionSuccess) {
+                decompileResult.addSuccessFile(decompileItem.getClassFilePath());
+            } else {
+                decompileResult.addFailureFile(decompileItem.getClassFilePath());
+            }
         }
 
         saveDecompiledFiles(decompileFileList, outputFolder);
 
-        return outputFolder;
+        return decompileResult
+                .setOutputFolder(outputFolder);
     }
 
     private void saveDecompiledFiles(List<DecompileFileModel> decompileFileList, Path outputFolder) throws IOException {
