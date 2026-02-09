@@ -1,5 +1,6 @@
 package tech.nmhillusion.jCamelDecompilerApp.model;
 
+import tech.nmhillusion.jCamelDecompilerApp.state.ExecutionState;
 import tech.nmhillusion.n2mix.type.Stringeable;
 
 import java.nio.file.Path;
@@ -16,6 +17,7 @@ public class DecompileResultModel extends Stringeable {
     private final List<Path> successFiles = new ArrayList<>();
     private final List<Path> failureFiles = new ArrayList<>();
     private Path outputFolder;
+    private ExecutionState executionState;
 
     public List<Path> getSuccessFiles() {
         return Collections.unmodifiableList(successFiles);
@@ -31,6 +33,15 @@ public class DecompileResultModel extends Stringeable {
 
     public DecompileResultModel setOutputFolder(Path outputFolder) {
         this.outputFolder = outputFolder;
+        return this;
+    }
+
+    public ExecutionState getExecutionState() {
+        return executionState;
+    }
+
+    public DecompileResultModel setExecutionState(ExecutionState executionState) {
+        this.executionState = executionState;
         return this;
     }
 

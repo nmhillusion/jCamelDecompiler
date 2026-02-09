@@ -263,7 +263,8 @@ public class DecompilerEngine {
         saveDecompiledFiles(decompileFileList, outputFolder);
 
         return decompileResult
-                .setOutputFolder(outputFolder);
+                .setOutputFolder(outputFolder)
+                .setExecutionState(executionState);
     }
 
     private void saveDecompiledFiles(List<DecompileFileModel> decompileFileList, Path outputFolder) throws IOException {

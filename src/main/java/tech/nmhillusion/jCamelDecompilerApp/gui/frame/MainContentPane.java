@@ -11,6 +11,7 @@ import tech.nmhillusion.jCamelDecompilerApp.gui.handler.LogUpdateHandler;
 import tech.nmhillusion.jCamelDecompilerApp.gui.handler.ProgressStatusUpdateHandler;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecompilerApp.loader.ExecutionStateLoader;
+import tech.nmhillusion.jCamelDecompilerApp.model.DecompileResultModel;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
 import tech.nmhillusion.jCamelDecompilerApp.state.ExecutionState;
 import tech.nmhillusion.n2mix.util.StringUtil;
@@ -303,20 +304,20 @@ public class MainContentPane extends JRootPane {
                     executionStateLoader
                             .saveState(executionState);
 
-                    var outputFolder = new DecompilerEngine(executionState)
+                    var decompileResult = new DecompilerEngine(executionState)
                             .execute(
                                     logUpdatableHandlerRef
                                     , progressStatusUpdatableHandlerRef
                             );
 
                     doLogMessageUI(LogType.WARN
-                            , "Done decompilation to folder {outputFolder}".replace("{outputFolder}",
-                                    String.valueOf(outputFolder)
+                            , "Done decompilation to folder {decompileResult}".replace("{decompileResult}",
+                                    String.valueOf(decompileResult.getOutputFolder())
                                             .replace("\\", "/")
                             )
                     );
 
-                    onDoneDecompilation(outputFolder);
+                    onDoneDecompilation(decompileResult);
                 } catch (Throwable ex) {
                     try {
                         doLogMessageUI(LogType.ERROR, "Error when decompile [%s]: %s".formatted(ex.getClass().getSimpleName(), ex.getMessage()));
@@ -330,13 +331,13 @@ public class MainContentPane extends JRootPane {
         return decompileButton;
     }
 
-    private void onDoneDecompilation(Path outputFolder) throws IOException {
+    private void onDoneDecompilation(DecompileResultModel decompileResult) throws IOException {
         final LogUpdatable handler = logUpdatableHandlerRef.get();
 
         if (null != handler) {
             handler.onDone(
                     "Decompiled done. Open decompiled folder?"
-                    , outputFolder
+                    , decompileResult
             );
         }
     }

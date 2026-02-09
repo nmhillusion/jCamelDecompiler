@@ -1,10 +1,10 @@
 package tech.nmhillusion.jCamelDecompilerApp.actionable;
 
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
+import tech.nmhillusion.jCamelDecompilerApp.model.DecompileResultModel;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Path;
 
 /**
  * created by: nmhillusion
@@ -14,5 +14,5 @@ import java.nio.file.Path;
 public interface LogUpdatable {
     void onLogMessage(LogType logType, String logMsg) throws InterruptedException, InvocationTargetException;
 
-    void onDone(String notificationContent, Path outputFolder) throws IOException;
+    void onDone(String notificationContent, DecompileResultModel decompileResult) throws IOException;
 }

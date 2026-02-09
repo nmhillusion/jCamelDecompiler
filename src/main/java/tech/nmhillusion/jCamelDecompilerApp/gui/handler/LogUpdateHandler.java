@@ -3,6 +3,7 @@ package tech.nmhillusion.jCamelDecompilerApp.gui.handler;
 import tech.nmhillusion.jCamelDecompilerApp.actionable.LogUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 import tech.nmhillusion.jCamelDecompilerApp.helper.ViewHelper;
+import tech.nmhillusion.jCamelDecompilerApp.model.DecompileResultModel;
 import tech.nmhillusion.n2mix.helper.log.LogHelper;
 import tech.nmhillusion.n2mix.type.ChainMap;
 
@@ -11,6 +12,7 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -111,7 +113,7 @@ public class LogUpdateHandler implements LogUpdatable {
     }
 
     @Override
-    public void onDone(String notificationContent, Path outputFolder) throws IOException {
+    public void onDone(String notificationContent, DecompileResultModel decompileResult) throws IOException {
         final int resultDialog = JOptionPane.showConfirmDialog(
                 logScrollPane
                 , notificationContent
@@ -120,8 +122,40 @@ public class LogUpdateHandler implements LogUpdatable {
 
         getLogger(this).info("result dialog = {}", resultDialog);
 
+        onLogMessage(
+                LogType.INFO
+                , MessageFormat.format(
+                        "Done decompilation by [{0}]. Result: success = {1}, failure = {2}"
+                        , decompileResult.getExecutionState().getDecompilerEngineId()
+                        , decompileResult.getSuccessFiles().size()
+                        , decompileResult.getFailureFiles().size()
+                )
+        );
+
+        logOutResultFiles(true, decompileResult.getSuccessFiles());
+        logOutResultFiles(false, decompileResult.getFailureFiles());
+
         if (JOptionPane.YES_OPTION == resultDialog) {
-            ViewHelper.openFileExplorer(outputFolder);
+            ViewHelper.openFileExplorer(decompileResult.getOutputFolder());
+        }
+    }
+
+    private void logOutResultFiles(boolean isSuccess, java.util.List<Path> files) {
+        if (!files.isEmpty()) {
+            onLogMessage(
+                    isSuccess ? LogType.INFO : LogType.WARN
+                    , (isSuccess ? "Success" : "Failure") + " files:"
+            );
+            for (int idx = 0; idx < files.size(); idx++) {
+                onLogMessage(
+                        isSuccess ? LogType.INFO : LogType.WARN
+                        , MessageFormat.format(
+                                "{0}. {1}"
+                                , idx + 1
+                                , files.get(idx).toString()
+                        )
+                );
+            }
         }
     }
 }
