@@ -1,3 +1,6 @@
+execution:
+  maxinum_exec_time_in_sec: 300
+
 decompilers:
   - id: procyon # https://github.com/mstrobel/procyon
     name: Procyon Decompiler

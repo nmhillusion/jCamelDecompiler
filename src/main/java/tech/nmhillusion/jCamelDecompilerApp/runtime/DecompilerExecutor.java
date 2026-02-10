@@ -5,15 +5,20 @@ import tech.nmhillusion.jCamelDecompilerApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompileFileModel;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
+import tech.nmhillusion.n2mix.helper.YamlReader;
 import tech.nmhillusion.n2mix.type.function.ThrowableVoidFunction;
 import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.TreeMap;
+import java.text.MessageFormat;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,11 +30,11 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
  * created date: 2025-03-15
  */
 public class DecompilerExecutor {
-    private static final Map<String, DecompilerExecutor> executorFactory = new TreeMap<>();
+    private final int MAXIMUM_EXECUTION_TIME;
     private final DecompilerEngineModel decompilerEngineModel;
     private final String decompilerCmd;
 
-    public DecompilerExecutor(DecompilerEngineModel decompilerEngineModel) {
+    public DecompilerExecutor(DecompilerEngineModel decompilerEngineModel) throws IOException {
         this.decompilerEngineModel = decompilerEngineModel;
 
         final String libraryPath = StringUtil.trimWithNull(PathsConstant.LIBRARY_PATH.getAbsolutePath());
@@ -43,6 +48,15 @@ public class DecompilerExecutor {
             this.decompilerCmd = StringValidator.isBlank(compilerOptions) ?
                     execFile
                     : String.format("%s %s", execFile, compilerOptions);
+        }
+
+        MAXIMUM_EXECUTION_TIME = getDecompilerConfig("execution.maxinum_exec_time_in_sec", int.class);
+    }
+
+    private <T> T getDecompilerConfig(String configKey, Class<T> class2Cast) throws IOException {
+        final Path appInfoPath = PathHelper.getPathOfResource("decompiler/decompilers.config.yml");
+        try (final InputStream fis = Files.newInputStream(appInfoPath)) {
+            return new YamlReader(fis).getProperty(configKey, class2Cast);
         }
     }
 
@@ -76,7 +90,21 @@ public class DecompilerExecutor {
             }
         }
 
-        final int exitCode = process_.waitFor();
+        final boolean doneExecution = process_.waitFor(
+                MAXIMUM_EXECUTION_TIME
+                , TimeUnit.SECONDS
+        );
+
+        if (!doneExecution) {
+            throw new TimeoutException(
+                    MessageFormat.format(
+                            "Exceed timeout execution, maximum time: {0} seconds"
+                            , MAXIMUM_EXECUTION_TIME
+                    )
+            );
+        }
+
+        final int exitCode = process_.exitValue();
 
         getLogger(this).info("Exit code: {}", exitCode);
 
