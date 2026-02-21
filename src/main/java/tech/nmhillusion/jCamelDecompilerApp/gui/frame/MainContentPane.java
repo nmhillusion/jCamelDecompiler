@@ -3,12 +3,14 @@ package tech.nmhillusion.jCamelDecompilerApp.gui.frame;
 import tech.nmhillusion.jCamelDecompilerApp.Main;
 import tech.nmhillusion.jCamelDecompilerApp.actionable.LogUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
+import tech.nmhillusion.jCamelDecompilerApp.constant.ExecutionStatus;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 import tech.nmhillusion.jCamelDecompilerApp.engine.DecompilerEngine;
 import tech.nmhillusion.jCamelDecompilerApp.gui.CustomFileView;
 import tech.nmhillusion.jCamelDecompilerApp.gui.component.ExplainHowToFilterPane;
 import tech.nmhillusion.jCamelDecompilerApp.gui.handler.LogUpdateHandler;
 import tech.nmhillusion.jCamelDecompilerApp.gui.handler.ProgressStatusUpdateHandler;
+import tech.nmhillusion.jCamelDecompilerApp.helper.ViewHelper;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecompilerApp.loader.ExecutionStateLoader;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompileResultModel;
@@ -28,7 +30,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.concurrent.Executor;
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,7 +45,7 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 public class MainContentPane extends JRootPane {
     private final JFrame mainFrame;
     private final ExecutionState executionState = new ExecutionState();
-    private final Executor DECOMPILE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
+    private final ExecutorService DECOMPILE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
     private final AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = new AtomicReference<>();
     private final AtomicReference<LogUpdatable> logUpdatableHandlerRef = new AtomicReference<>();
     private final DecompilerLoader decompilerLoader = DecompilerLoader.getInstance();
@@ -52,7 +55,7 @@ public class MainContentPane extends JRootPane {
     private final JTextField fieldFilteredFilePath = new JTextField();
 
 
-    public MainContentPane(JFrame mainFrame) {
+    public MainContentPane(JFrame mainFrame) throws IOException {
         this.mainFrame = mainFrame;
         loadState();
 
@@ -278,57 +281,107 @@ public class MainContentPane extends JRootPane {
         }
     }
 
-    private JButton createDecompileButton() {
-        final JButton decompileButton = new JButton("Decompile");
+    private JPanel createDecompileButton() throws IOException {
+        final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        decompileButton.setBackground(Color.CYAN);
-        decompileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        decompileButton.addActionListener(e -> {
-            getLogger(this).info("Decompile for: {}", executionState);
+        {
+            /// Mark: decompile button
+            final JButton decompileButton = new JButton("Decompile");
 
-            DECOMPILE_EXECUTOR.execute(() -> {
-                try {
-                    executionState
-                            .setClassesFolderPath(
-                                    Path.of(fieldInputDecompileFolder.getText())
-                            )
-                            .setOutputFolder(
-                                    Path.of(fieldOutputDecompileFolder.getText())
-                            )
-                            .setFilteredFilePath(
-                                    Path.of(fieldFilteredFilePath.getText())
-                            )
-                    ;
+            decompileButton.setBackground(Color.CYAN);
+            decompileButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            decompileButton.setIcon(new ImageIcon(
+                    ViewHelper.getIconForButton("icon/exec-icon.png", 15, 15)
+            ));
 
+            decompileButton.addActionListener(e -> {
+                getLogger(this).info("Decompile for: {}", executionState);
 
-                    executionStateLoader
-                            .saveState(executionState);
-
-                    var decompileResult = new DecompilerEngine(executionState)
-                            .execute(
-                                    logUpdatableHandlerRef
-                                    , progressStatusUpdatableHandlerRef
-                            );
-
-                    doLogMessageUI(LogType.WARN
-                            , "Done decompilation to folder {decompileResult}".replace("{decompileResult}",
-                                    String.valueOf(decompileResult.getOutputFolder())
-                                            .replace("\\", "/")
-                            )
-                    );
-
-                    onDoneDecompilation(decompileResult);
-                } catch (Throwable ex) {
+                DECOMPILE_EXECUTOR.execute(() -> {
                     try {
-                        doLogMessageUI(LogType.ERROR, "Error when decompile [%s]: %s".formatted(ex.getClass().getSimpleName(), ex.getMessage()));
-                    } catch (InterruptedException | InvocationTargetException ignored) {
+                        executionState
+                                .setClassesFolderPath(
+                                        Path.of(fieldInputDecompileFolder.getText())
+                                )
+                                .setOutputFolder(
+                                        Path.of(fieldOutputDecompileFolder.getText())
+                                )
+                                .setFilteredFilePath(
+                                        Path.of(fieldFilteredFilePath.getText())
+                                )
+                                .setExecutionStatus(ExecutionStatus.PREPARE)
+                        ;
+
+
+                        executionStateLoader
+                                .saveState(executionState);
+
+                        var decompileResult = new DecompilerEngine(executionState)
+                                .execute(
+                                        logUpdatableHandlerRef
+                                        , progressStatusUpdatableHandlerRef
+                                );
+
+                        doLogMessageUI(LogType.WARN
+                                , "Done decompilation to folder {decompileResult}".replace("{decompileResult}",
+                                        String.valueOf(decompileResult.getOutputFolder())
+                                                .replace("\\", "/")
+                                )
+                        );
+
+                        onDoneDecompilation(decompileResult);
+                    } catch (Throwable ex) {
+                        try {
+                            doLogMessageUI(LogType.ERROR, "Error when decompile [%s]: %s".formatted(ex.getClass().getSimpleName(), ex.getMessage()));
+                        } catch (InterruptedException | InvocationTargetException ignored) {
+                        }
+                        throw new RuntimeException(ex);
                     }
+                });
+            });
+
+            executionState.addListener(() -> {
+                decompileButton.setEnabled(ExecutionStatus.PROCESSING != executionState.getExecutionStatus());
+            });
+
+            panel.add(decompileButton);
+        }
+
+        {
+            /// Mark: stop button
+            final JButton stopButton = new JButton("Stop");
+            stopButton.setForeground(Color.RED);
+            stopButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            stopButton.setIcon(new ImageIcon(
+                    ViewHelper.getIconForButton("icon/stop-icon.png", 15, 15)
+            ));
+            stopButton.setEnabled(false);
+
+            stopButton.addActionListener(e -> {
+                getLogger(this).info("Stop decompile");
+
+                executionState.setExecutionStatus(ExecutionStatus.CANCELLED);
+                DECOMPILE_EXECUTOR.shutdown();
+
+                try {
+                    Thread.sleep(Duration.ofSeconds(3));
+                } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
-            });
-        });
 
-        return decompileButton;
+                if (!DECOMPILE_EXECUTOR.isShutdown() || !DECOMPILE_EXECUTOR.isTerminated()) {
+                    DECOMPILE_EXECUTOR.shutdownNow();
+                }
+            });
+
+            executionState.addListener(() -> {
+                stopButton.setEnabled(ExecutionStatus.PROCESSING == executionState.getExecutionStatus());
+            });
+
+            panel.add(stopButton);
+        }
+
+        return panel;
     }
 
     private void onDoneDecompilation(DecompileResultModel decompileResult) throws IOException {

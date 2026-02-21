@@ -3,6 +3,7 @@ package tech.nmhillusion.jCamelDecompilerApp.engine;
 import tech.nmhillusion.jCamelDecompilerApp.actionable.LogUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
 import tech.nmhillusion.jCamelDecompilerApp.constant.CommonNameConstant;
+import tech.nmhillusion.jCamelDecompilerApp.constant.ExecutionStatus;
 import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompileFileModel;
@@ -144,10 +145,25 @@ public class DecompilerEngine {
     public DecompileResultModel execute(AtomicReference<LogUpdatable> logUpdatableHandlerRef,
                                         AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
         validateExecutionState();
-        return doExecute(
-                logUpdatableHandlerRef
-                , progressStatusUpdatableHandler
-        );
+        throwIfCancelled();
+
+        if (ExecutionStatus.PREPARE == executionState.getExecutionStatus()) {
+            executionState.setExecutionStatus(ExecutionStatus.PROCESSING);
+            final DecompileResultModel decompileResult = doExecute(
+                    logUpdatableHandlerRef
+                    , progressStatusUpdatableHandler
+            );
+            executionState.setExecutionStatus(ExecutionStatus.FINISHED);
+            return decompileResult;
+        } else {
+            throw new IllegalStateException("Execution status is not PREPARE");
+        }
+    }
+
+    private void throwIfCancelled() {
+        if (ExecutionStatus.CANCELLED == executionState.getExecutionStatus()) {
+            throw new IllegalStateException("Execution is cancelled");
+        }
     }
 
     private DecompileResultModel doExecute(AtomicReference<LogUpdatable> logUpdatableRef,
@@ -163,6 +179,7 @@ public class DecompilerEngine {
 
         final Path outputFolder = executionState.getOutputFolder();
 
+        throwIfCancelled();
         final List<DecompileFileModel> decompileFileOriginalList = traversalPaths(executionState.getClassesFolderPath())
                 .stream()
                 .filter(path_ -> Files.isRegularFile(path_) &&
@@ -176,10 +193,13 @@ public class DecompilerEngine {
                 )
                 .toList();
 
+        throwIfCancelled();
 
         final List<DecompileFileModel> decompileFileList = doFilterFileByFiltedList(
                 decompileFileOriginalList
         );
+
+        throwIfCancelled();
 
         final DecompilerExecutor decompilerExecutor = new DecompilerExecutor(decompilerEngineModel);
 
@@ -197,6 +217,8 @@ public class DecompilerEngine {
                         String.valueOf(decompileFileCount))
         );
 
+        throwIfCancelled();
+
         doLogMessage(logUpdatableHandler
                 , LogType.WARN
                 , "Cleaning output folder"
@@ -204,6 +226,8 @@ public class DecompilerEngine {
         this.deleteFolderRecursive(executionState.getOutputFolder());
 
         for (int fileIdx = 0; fileIdx < decompileFileCount; fileIdx++) {
+            throwIfCancelled();
+
             var decompileItem = decompileFileList.get(fileIdx);
 
             final String currentExecClassFilePath = String.valueOf(
@@ -259,6 +283,8 @@ public class DecompilerEngine {
                 decompileResult.addFailureFile(decompileItem.getClassFilePath());
             }
         }
+
+        throwIfCancelled();
 
         saveDecompiledFiles(decompileFileList, outputFolder);
 

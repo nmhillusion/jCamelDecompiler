@@ -1,9 +1,12 @@
 package tech.nmhillusion.jCamelDecompilerApp.state;
 
+import tech.nmhillusion.jCamelDecompilerApp.constant.ExecutionStatus;
 import tech.nmhillusion.n2mix.type.Stringeable;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * created by: nmhillusion
@@ -16,6 +19,8 @@ public class ExecutionState extends Stringeable {
     private String decompilerEngineId;
     private boolean isOnlyFilteredFiles;
     private Path filteredFilePath;
+    private final List<ExecutionStateListener> listeners = new ArrayList<>();
+    private ExecutionStatus executionStatus;
 
     public static ExecutionState from(ExecutionStateSerializable executionStateSerializable) {
         final ExecutionState executionState = new ExecutionState();
@@ -24,7 +29,27 @@ public class ExecutionState extends Stringeable {
         executionState.setDecompilerEngineId(executionStateSerializable.getDecompilerEngineId());
         executionState.setIsOnlyFilteredFiles(executionStateSerializable.getIsOnlyFilteredFiles());
         executionState.setFilteredFilePath(Paths.get(executionStateSerializable.getFilteredFilePath()));
+        executionState.setExecutionStatus(ExecutionStatus.PREPARE);
+
         return executionState;
+    }
+
+    public void addListener(ExecutionStateListener listener) {
+        listeners.add(listener);
+    }
+
+    private void triggerListeners() {
+        listeners.forEach(ExecutionStateListener::updated);
+    }
+
+    public ExecutionStatus getExecutionStatus() {
+        return executionStatus;
+    }
+
+    public ExecutionState setExecutionStatus(ExecutionStatus executionStatus) {
+        this.executionStatus = executionStatus;
+        triggerListeners();
+        return this;
     }
 
     public Path getClassesFolderPath() {
@@ -33,6 +58,7 @@ public class ExecutionState extends Stringeable {
 
     public ExecutionState setClassesFolderPath(Path classesFolderPath) {
         this.classesFolderPath = classesFolderPath;
+        triggerListeners();
         return this;
     }
 
@@ -42,6 +68,7 @@ public class ExecutionState extends Stringeable {
 
     public ExecutionState setOutputFolder(Path outputFolder) {
         this.outputFolder = outputFolder;
+        triggerListeners();
         return this;
     }
 
@@ -51,6 +78,7 @@ public class ExecutionState extends Stringeable {
 
     public ExecutionState setDecompilerEngineId(String decompilerEngineId) {
         this.decompilerEngineId = decompilerEngineId;
+        triggerListeners();
         return this;
     }
 
@@ -60,6 +88,7 @@ public class ExecutionState extends Stringeable {
 
     public ExecutionState setIsOnlyFilteredFiles(boolean onlyFilteredFiles) {
         isOnlyFilteredFiles = onlyFilteredFiles;
+        triggerListeners();
         return this;
     }
 
@@ -69,6 +98,7 @@ public class ExecutionState extends Stringeable {
 
     public ExecutionState setFilteredFilePath(Path filteredFilePath) {
         this.filteredFilePath = filteredFilePath;
+        triggerListeners();
         return this;
     }
 }
