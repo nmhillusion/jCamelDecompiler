@@ -11,16 +11,18 @@ import javax.swing.*;
  */
 public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
     private final JProgressBar progressBar;
+    private final JLabel progressStatusLabel;
 
-
-    public ProgressStatusUpdateHandler(JProgressBar progressBar) {
+    public ProgressStatusUpdateHandler(JProgressBar progressBar, JLabel progressStatusLabel) {
         this.progressBar = progressBar;
+        this.progressStatusLabel = progressStatusLabel;
     }
 
     @Override
-    public void onUpdateProgressValue(int newPercentValue) {
+    public void onUpdateProgressValue(int newPercent, int currentCompletedCount, int totalCount) {
         SwingUtilities.invokeLater(() -> {
-            progressBar.setValue(newPercentValue);
+            progressBar.setValue(newPercent);
+            progressStatusLabel.setText("Processing... " + currentCompletedCount + "/" + totalCount);
         });
     }
 }

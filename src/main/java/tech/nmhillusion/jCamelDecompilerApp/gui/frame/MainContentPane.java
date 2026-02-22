@@ -216,13 +216,16 @@ public class MainContentPane extends JRootPane {
         final JPanel panel = new JPanel(new BorderLayout());
 
         final JProgressBar progressBar = new JProgressBar(0, 100);
+        final JLabel progressStatusLabel = new JLabel("Ready");
 
         progressStatusUpdatableHandlerRef.set(
                 new ProgressStatusUpdateHandler(
                         progressBar
+                        , progressStatusLabel
                 )
         );
 
+        panel.add(progressStatusLabel, BorderLayout.NORTH);
         panel.add(progressBar, BorderLayout.CENTER);
 
         return panel;

@@ -283,6 +283,8 @@ public class DecompilerEngine {
                     .orElseThrow();
             progressStatusUpdatable.onUpdateProgressValue(
                     Math.floorDivExact((fileIdx + 1) * 100, decompileFileCount)
+                    , fileIdx + 1
+                    , decompileFileCount
             );
 
             if (isExecutionSuccess) {
