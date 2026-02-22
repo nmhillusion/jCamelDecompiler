@@ -25,4 +25,19 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
             progressStatusLabel.setText("Processing... " + currentCompletedCount + "/" + totalCount);
         });
     }
+
+    @Override
+    public void resetProcessState() {
+        SwingUtilities.invokeLater(() -> {
+            progressBar.setValue(0);
+            progressStatusLabel.setText("Ready");
+        });
+    }
+
+    @Override
+    public void startProgress() {
+        SwingUtilities.invokeLater(() -> {
+            progressStatusLabel.setText("Starting...");
+        });
+    }
 }

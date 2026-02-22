@@ -225,6 +225,9 @@ public class MainContentPane extends JRootPane {
                 )
         );
 
+        progressStatusUpdatableHandlerRef.get()
+                .resetProcessState();
+
         panel.add(progressStatusLabel, BorderLayout.NORTH);
         panel.add(progressBar, BorderLayout.CENTER);
 
@@ -319,6 +322,9 @@ public class MainContentPane extends JRootPane {
                         executionStateLoader
                                 .saveState(executionState);
 
+                        progressStatusUpdatableHandlerRef.get()
+                                .startProgress();
+
                         var decompileResult = new DecompilerEngine(executionState)
                                 .execute(
                                         logUpdatableHandlerRef
@@ -388,13 +394,18 @@ public class MainContentPane extends JRootPane {
     }
 
     private void onDoneDecompilation(DecompileResultModel decompileResult) throws IOException {
-        final LogUpdatable handler = logUpdatableHandlerRef.get();
+        final LogUpdatable logHandler = logUpdatableHandlerRef.get();
+        final ProgressStatusUpdatable progressStatusUpdatable = progressStatusUpdatableHandlerRef.get();
 
-        if (null != handler) {
-            handler.onDone(
+        if (null != logHandler) {
+            logHandler.onDone(
                     "Decompiled done. Open decompiled folder?"
                     , decompileResult
             );
+        }
+
+        if (null != progressStatusUpdatable) {
+            progressStatusUpdatable.resetProcessState();
         }
     }
 

@@ -9,4 +9,8 @@ import java.lang.reflect.InvocationTargetException;
  */
 public interface ProgressStatusUpdatable {
     void onUpdateProgressValue(int newPercent, int currentCompletedCount, int totalCount) throws InterruptedException, InvocationTargetException;
+
+    void resetProcessState();
+
+    void startProgress();
 }
