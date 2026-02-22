@@ -274,8 +274,10 @@ public class DecompilerEngine {
             doLogMessage(
                     logUpdatableHandler
                     , LogType.INFO
-                    , "Decompilation time: {decompileTime} ms"
-                            .replace("{decompileTime}", String.valueOf(System.currentTimeMillis() - startDecompileTime))
+                    , MessageFormat.format(
+                            "Decompilation time: {0} ms"
+                            , System.currentTimeMillis() - startDecompileTime
+                    )
             );
 
             final ProgressStatusUpdatable progressStatusUpdatable = Optional.ofNullable(progressStatusUpdatableHandler)

@@ -14,5 +14,5 @@ import java.lang.reflect.InvocationTargetException;
 public interface LogUpdatable {
     void onLogMessage(LogType logType, String logMsg) throws InterruptedException, InvocationTargetException;
 
-    void onDone(String notificationContent, DecompileResultModel decompileResult) throws IOException;
+    void onDone(String notificationContent, DecompileResultModel decompileResult, long startDecompileTime) throws IOException;
 }

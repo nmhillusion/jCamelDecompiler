@@ -113,7 +113,7 @@ public class LogUpdateHandler implements LogUpdatable {
     }
 
     @Override
-    public void onDone(String notificationContent, DecompileResultModel decompileResult) throws IOException {
+    public void onDone(String notificationContent, DecompileResultModel decompileResult, long startDecompileTime) throws IOException {
         final int resultDialog = JOptionPane.showConfirmDialog(
                 logScrollPane
                 , notificationContent
@@ -125,10 +125,11 @@ public class LogUpdateHandler implements LogUpdatable {
         onLogMessage(
                 LogType.INFO
                 , MessageFormat.format(
-                        "Done decompilation by [{0}]. Result: success = {1}, failure = {2}"
+                        "Done decompilation by [{0}]. Result: success = {1}, failure = {2}. Total time: {3} seconds."
                         , decompileResult.getExecutionState().getDecompilerEngineId()
                         , decompileResult.getSuccessFiles().size()
                         , decompileResult.getFailureFiles().size()
+                        , (System.currentTimeMillis() - startDecompileTime) / 1000.0
                 )
         );
 

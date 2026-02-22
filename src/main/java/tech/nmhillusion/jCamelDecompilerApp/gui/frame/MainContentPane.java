@@ -305,6 +305,8 @@ public class MainContentPane extends JRootPane {
 
                 DECOMPILE_EXECUTOR.execute(() -> {
                     try {
+                        final long startDecompileTime = System.currentTimeMillis();
+
                         executionState
                                 .setClassesFolderPath(
                                         Path.of(fieldInputDecompileFolder.getText())
@@ -338,7 +340,7 @@ public class MainContentPane extends JRootPane {
                                 )
                         );
 
-                        onDoneDecompilation(decompileResult);
+                        onDoneDecompilation(decompileResult, startDecompileTime);
                     } catch (Throwable ex) {
                         try {
                             doLogMessageUI(LogType.ERROR, "Error when decompile [%s]: %s".formatted(ex.getClass().getSimpleName(), ex.getMessage()));
@@ -393,7 +395,7 @@ public class MainContentPane extends JRootPane {
         return panel;
     }
 
-    private void onDoneDecompilation(DecompileResultModel decompileResult) throws IOException {
+    private void onDoneDecompilation(DecompileResultModel decompileResult, long startDecompileTime) throws IOException {
         final LogUpdatable logHandler = logUpdatableHandlerRef.get();
         final ProgressStatusUpdatable progressStatusUpdatable = progressStatusUpdatableHandlerRef.get();
 
@@ -401,6 +403,7 @@ public class MainContentPane extends JRootPane {
             logHandler.onDone(
                     "Decompiled done. Open decompiled folder?"
                     , decompileResult
+                    , startDecompileTime
             );
         }
 
