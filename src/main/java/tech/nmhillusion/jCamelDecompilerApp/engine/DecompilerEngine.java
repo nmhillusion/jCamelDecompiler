@@ -226,6 +226,8 @@ public class DecompilerEngine {
         this.deleteFolderRecursive(executionState.getOutputFolder());
 
         for (int fileIdx = 0; fileIdx < decompileFileCount; fileIdx++) {
+            final long startDecompileTime = System.currentTimeMillis();
+
             throwIfCancelled();
 
             var decompileItem = decompileFileList.get(fileIdx);
@@ -268,6 +270,12 @@ public class DecompilerEngine {
                     , "Decompiled result: {exitCode} for {filePath}"
                             .replace("{exitCode}", String.valueOf(exitCode))
                             .replace("{filePath}", currentExecClassFilePath)
+            );
+            doLogMessage(
+                    logUpdatableHandler
+                    , LogType.INFO
+                    , "Decompilation time: {decompileTime} ms"
+                            .replace("{decompileTime}", String.valueOf(System.currentTimeMillis() - startDecompileTime))
             );
 
             final ProgressStatusUpdatable progressStatusUpdatable = Optional.ofNullable(progressStatusUpdatableHandler)
