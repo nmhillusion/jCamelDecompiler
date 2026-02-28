@@ -37,8 +37,14 @@ public class LogUpdateHandler implements LogUpdatable {
         this.logScrollPane = logScrollPane;
     }
 
+    @Override
+    public void onStartProgress() {
+        onLogMessage(LogType.INFO, "----------------------------------------");
+        onLogMessage(LogType.INFO, "Start decompilation...");
+    }
+
     private void removeFirstLineOfLogView() {
-        StyledDocument doc = logView.getStyledDocument();
+        final StyledDocument doc = logView.getStyledDocument();
         try {
             final int endOfFirstLine = logView.getText().indexOf('\n');
             if (endOfFirstLine > 0) {

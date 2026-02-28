@@ -336,6 +336,8 @@ public class MainContentPane extends JRootPane {
 
                         progressStatusUpdatableHandlerRef.get()
                                 .startProgress();
+                        logUpdatableHandlerRef.get()
+                                .onStartProgress();
 
                         var decompileResult = new DecompilerEngine(executionState)
                                 .execute(

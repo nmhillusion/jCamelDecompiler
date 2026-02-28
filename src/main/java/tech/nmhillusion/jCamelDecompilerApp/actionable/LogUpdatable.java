@@ -14,8 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 public interface LogUpdatable {
     void onLogMessage(LogType logType, String logMsg) throws InterruptedException, InvocationTargetException;
 
+    void onStartProgress();
+
     void onDone(String notificationContent, DecompileResultModel decompileResult, long startDecompileTime) throws IOException;
 
     void onClearLog();
-    
 }
