@@ -31,9 +31,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 
@@ -45,13 +45,13 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 public class MainContentPane extends JRootPane {
     private final JFrame mainFrame;
     private final ExecutionState executionState = new ExecutionState();
-    private final AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = new AtomicReference<>();
-    private final AtomicReference<LogUpdatable> logUpdatableHandlerRef = new AtomicReference<>();
     private final DecompilerLoader decompilerLoader = DecompilerLoader.getInstance();
     private final ExecutionStateLoader executionStateLoader = ExecutionStateLoader.getInstance();
     private final JTextField fieldInputDecompileFolder = new JTextField();
     private final JTextField fieldOutputDecompileFolder = new JTextField();
     private final JTextField fieldFilteredFilePath = new JTextField();
+    private Optional<LogUpdatable> logUpdatableHandlerRef = Optional.empty();
+    private Optional<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = Optional.empty();
     private ExecutorService DECOMPILE_EXECUTOR;
 
 
@@ -219,7 +219,7 @@ public class MainContentPane extends JRootPane {
         final JProgressBar progressBar = new JProgressBar(0, 100);
         final JLabel progressStatusLabel = new JLabel("Ready");
 
-        progressStatusUpdatableHandlerRef.set(
+        progressStatusUpdatableHandlerRef = Optional.of(
                 new ProgressStatusUpdateHandler(
                         progressBar
                         , progressStatusLabel
@@ -253,7 +253,7 @@ public class MainContentPane extends JRootPane {
             }});
         }});
 
-        logUpdatableHandlerRef.set(
+        logUpdatableHandlerRef = Optional.of(
                 new LogUpdateHandler(
                         logView
                         , logScrollPane
@@ -334,15 +334,17 @@ public class MainContentPane extends JRootPane {
                         executionStateLoader
                                 .saveState(executionState);
 
-                        progressStatusUpdatableHandlerRef.get()
-                                .startProgress();
-                        logUpdatableHandlerRef.get()
-                                .onStartProgress();
+                        progressStatusUpdatableHandlerRef
+                                .ifPresent(ProgressStatusUpdatable::startProgress);
+                        logUpdatableHandlerRef
+                                .ifPresent(LogUpdatable::onStartProgress);
 
                         var decompileResult = new DecompilerEngine(executionState)
                                 .execute(
                                         logUpdatableHandlerRef
+                                                .orElseThrow()
                                         , progressStatusUpdatableHandlerRef
+                                                .orElseThrow()
                                 );
 
                         doLogMessageUI(LogType.WARN
@@ -384,8 +386,8 @@ public class MainContentPane extends JRootPane {
                 getLogger(this).info("Stop decompile");
 
                 executionState.setExecutionStatus(ExecutionStatus.CANCELLED);
-                progressStatusUpdatableHandlerRef.get()
-                        .cancelProgress();
+                progressStatusUpdatableHandlerRef
+                        .ifPresent(ProgressStatusUpdatable::cancelProgress);
                 ThreadHelper.sleep(1200);
                 resetDecompileExecutor();
             });
@@ -415,28 +417,31 @@ public class MainContentPane extends JRootPane {
     }
 
     private void onDoneDecompilation(DecompileResultModel decompileResult, long startDecompileTime) throws IOException {
-        final LogUpdatable logHandler = logUpdatableHandlerRef.get();
-        final ProgressStatusUpdatable progressStatusUpdatable = progressStatusUpdatableHandlerRef.get();
-
-        if (null != logHandler) {
-            logHandler.onDone(
-                    "Decompiled done. Open decompiled folder?"
-                    , decompileResult
-                    , startDecompileTime
-            );
-        }
-
-        if (null != progressStatusUpdatable) {
-            progressStatusUpdatable.resetProcessState();
-        }
+        logUpdatableHandlerRef
+                .ifPresent(handler -> {
+                    try {
+                        handler.onDone(
+                                "Decompiled done. Open decompiled folder?"
+                                , decompileResult
+                                , startDecompileTime
+                        );
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+        progressStatusUpdatableHandlerRef
+                .ifPresent(ProgressStatusUpdatable::resetProcessState);
     }
 
     private void doLogMessageUI(LogType logType, String logMessage) throws InterruptedException, InvocationTargetException {
-        final LogUpdatable handler = logUpdatableHandlerRef.get();
-
-        if (null != handler) {
-            handler.onLogMessage(logType, logMessage);
-        }
+        logUpdatableHandlerRef
+                .ifPresent(handler -> {
+                    try {
+                        handler.onLogMessage(logType, logMessage);
+                    } catch (InterruptedException | InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     private JPanel createInputDecompileFolder() {

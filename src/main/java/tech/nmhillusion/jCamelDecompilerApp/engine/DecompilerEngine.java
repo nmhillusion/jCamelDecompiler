@@ -25,8 +25,6 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -142,15 +140,15 @@ public class DecompilerEngine {
         }
     }
 
-    public DecompileResultModel execute(AtomicReference<LogUpdatable> logUpdatableHandlerRef,
-                                        AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
+    public DecompileResultModel execute(LogUpdatable logUpdatableHandler,
+                                        ProgressStatusUpdatable progressStatusUpdatableHandler) throws Throwable {
         validateExecutionState();
         throwIfCancelled();
 
         if (ExecutionStatus.PREPARE == executionState.getExecutionStatus()) {
             executionState.setExecutionStatus(ExecutionStatus.PROCESSING);
             final DecompileResultModel decompileResult = doExecute(
-                    logUpdatableHandlerRef
+                    logUpdatableHandler
                     , progressStatusUpdatableHandler
             );
             executionState.setExecutionStatus(ExecutionStatus.FINISHED);
@@ -166,10 +164,9 @@ public class DecompilerEngine {
         }
     }
 
-    private DecompileResultModel doExecute(AtomicReference<LogUpdatable> logUpdatableRef,
-                                           AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandler) throws Throwable {
+    private DecompileResultModel doExecute(LogUpdatable logUpdatableHandler,
+                                           ProgressStatusUpdatable progressStatusUpdatableHandler) throws Throwable {
         final DecompileResultModel decompileResult = new DecompileResultModel();
-        final LogUpdatable logUpdatableHandler = logUpdatableRef.get();
 
         doLogMessage(
                 logUpdatableHandler
@@ -285,10 +282,8 @@ public class DecompilerEngine {
             );
 
             throwIfCancelled();
-            final ProgressStatusUpdatable progressStatusUpdatable = Optional.ofNullable(progressStatusUpdatableHandler)
-                    .map(AtomicReference::get)
-                    .orElseThrow();
-            progressStatusUpdatable.onUpdateProgressValue(
+
+            progressStatusUpdatableHandler.onUpdateProgressValue(
                     Math.floorDivExact((fileIdx + 1) * 100, decompileFileCount)
                     , fileIdx + 1
                     , decompileFileCount
