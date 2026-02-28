@@ -55,7 +55,21 @@ Alternatively, run directly via Gradle:
 
 ## Configuration
 
-Decompiler engines and their settings are managed via `src/main/resources/decompiler/decompilers.config.yml`. You can adjust maximum execution times and engine-specific options there.
+Decompiler engines and their settings are managed via `src/main/resources/decompiler/decompilers.config.yml`.
+
+### Execution Settings
+
+- `maxinum_exec_time_in_sec`: The maximum allowed time (in seconds) for a single decompiler execution before it is timed out.
+
+### Decompiler Engines
+
+Each entry in the `decompilers` list defines a supported engine:
+
+- `id`: Unique identifier for the engine.
+- `name`: Display name shown in the GUI.
+- `options`: Additional specific command-line flags or arguments for the decompiler.
+- `libFilename`: The name of the JAR file located in the `decompiler` resource folder.
+- `execScriptFilename`: The batch script file name (`.bat`) used to invoke the decompiler execution.
 
 ## Author
 
