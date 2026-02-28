@@ -15,4 +15,7 @@ public interface LogUpdatable {
     void onLogMessage(LogType logType, String logMsg) throws InterruptedException, InvocationTargetException;
 
     void onDone(String notificationContent, DecompileResultModel decompileResult, long startDecompileTime) throws IOException;
+
+    void onClearLog();
+    
 }

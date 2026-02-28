@@ -159,4 +159,9 @@ public class LogUpdateHandler implements LogUpdatable {
             }
         }
     }
+
+    @Override
+    public void onClearLog() {
+        logView.setText("");
+    }
 }

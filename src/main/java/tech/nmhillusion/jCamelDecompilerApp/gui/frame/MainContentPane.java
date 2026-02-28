@@ -244,6 +244,15 @@ public class MainContentPane extends JRootPane {
 
         logView.setAutoscrolls(true);
 
+        logView.setComponentPopupMenu(new JPopupMenu() {{
+            add(new JMenuItem("Clear Log") {{
+                addActionListener(e -> {
+                    logUpdatableHandlerRef.get()
+                            .onClearLog();
+                });
+            }});
+        }});
+
         logUpdatableHandlerRef.set(
                 new LogUpdateHandler(
                         logView
