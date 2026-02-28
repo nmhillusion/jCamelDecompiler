@@ -40,4 +40,11 @@ public class ProgressStatusUpdateHandler implements ProgressStatusUpdatable {
             progressStatusLabel.setText("Starting...");
         });
     }
+
+    @Override
+    public void cancelProgress() {
+        SwingUtilities.invokeLater(() -> {
+            progressStatusLabel.setText("Cancelled");
+        });
+    }
 }

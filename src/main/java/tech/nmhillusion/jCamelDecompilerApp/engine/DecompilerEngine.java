@@ -246,11 +246,15 @@ public class DecompilerEngine {
                             )
             );
 
+            throwIfCancelled();
+
             mkdirForDirectory(
                     decompileItem.getClassFilePath()
                     , executionState.getClassesFolderPath()
                     , outputFolder
             );
+
+            throwIfCancelled();
 
             /// Mark: EXECUTING DECOMPILATION
             final int exitCode = decompilerExecutor.execScriptFile(
@@ -280,6 +284,7 @@ public class DecompilerEngine {
                     )
             );
 
+            throwIfCancelled();
             final ProgressStatusUpdatable progressStatusUpdatable = Optional.ofNullable(progressStatusUpdatableHandler)
                     .map(AtomicReference::get)
                     .orElseThrow();

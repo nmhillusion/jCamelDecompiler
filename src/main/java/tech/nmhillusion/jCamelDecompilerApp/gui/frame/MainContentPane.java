@@ -10,6 +10,7 @@ import tech.nmhillusion.jCamelDecompilerApp.gui.CustomFileView;
 import tech.nmhillusion.jCamelDecompilerApp.gui.component.ExplainHowToFilterPane;
 import tech.nmhillusion.jCamelDecompilerApp.gui.handler.LogUpdateHandler;
 import tech.nmhillusion.jCamelDecompilerApp.gui.handler.ProgressStatusUpdateHandler;
+import tech.nmhillusion.jCamelDecompilerApp.helper.ThreadHelper;
 import tech.nmhillusion.jCamelDecompilerApp.helper.ViewHelper;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
 import tech.nmhillusion.jCamelDecompilerApp.loader.ExecutionStateLoader;
@@ -30,7 +31,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,7 +45,6 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 public class MainContentPane extends JRootPane {
     private final JFrame mainFrame;
     private final ExecutionState executionState = new ExecutionState();
-    private final ExecutorService DECOMPILE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
     private final AtomicReference<ProgressStatusUpdatable> progressStatusUpdatableHandlerRef = new AtomicReference<>();
     private final AtomicReference<LogUpdatable> logUpdatableHandlerRef = new AtomicReference<>();
     private final DecompilerLoader decompilerLoader = DecompilerLoader.getInstance();
@@ -53,11 +52,13 @@ public class MainContentPane extends JRootPane {
     private final JTextField fieldInputDecompileFolder = new JTextField();
     private final JTextField fieldOutputDecompileFolder = new JTextField();
     private final JTextField fieldFilteredFilePath = new JTextField();
+    private ExecutorService DECOMPILE_EXECUTOR;
 
 
     public MainContentPane(JFrame mainFrame) throws IOException {
         this.mainFrame = mainFrame;
         loadState();
+        resetDecompileExecutor();
 
         this.setBorder(BorderFactory.createEmptyBorder(8, 8, 0, 8));
 
@@ -372,17 +373,10 @@ public class MainContentPane extends JRootPane {
                 getLogger(this).info("Stop decompile");
 
                 executionState.setExecutionStatus(ExecutionStatus.CANCELLED);
-                DECOMPILE_EXECUTOR.shutdown();
-
-                try {
-                    Thread.sleep(Duration.ofSeconds(3));
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-                if (!DECOMPILE_EXECUTOR.isShutdown() || !DECOMPILE_EXECUTOR.isTerminated()) {
-                    DECOMPILE_EXECUTOR.shutdownNow();
-                }
+                progressStatusUpdatableHandlerRef.get()
+                        .cancelProgress();
+                ThreadHelper.sleep(1200);
+                resetDecompileExecutor();
             });
 
             executionState.addListener(() -> {
@@ -393,6 +387,20 @@ public class MainContentPane extends JRootPane {
         }
 
         return panel;
+    }
+
+    private void resetDecompileExecutor() {
+        if (null != DECOMPILE_EXECUTOR && !DECOMPILE_EXECUTOR.isShutdown()) {
+            DECOMPILE_EXECUTOR.shutdown();
+
+            ThreadHelper.sleep(3000);
+
+            if (!DECOMPILE_EXECUTOR.isShutdown() || !DECOMPILE_EXECUTOR.isTerminated()) {
+                DECOMPILE_EXECUTOR.shutdownNow();
+            }
+        }
+
+        DECOMPILE_EXECUTOR = Executors.newVirtualThreadPerTaskExecutor();
     }
 
     private void onDoneDecompilation(DecompileResultModel decompileResult, long startDecompileTime) throws IOException {

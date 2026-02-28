@@ -13,4 +13,6 @@ public interface ProgressStatusUpdatable {
     void resetProcessState();
 
     void startProgress();
+
+    void cancelProgress();
 }
