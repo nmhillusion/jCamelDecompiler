@@ -1,6 +1,9 @@
 # jCamelDecompiler
 
-A modern, multi-engine Java decompiler GUI application built with Java 21 and Swing.
+![Version](https://img.shields.io/badge/version-2026.1.0-blue)
+![Java](https://img.shields.io/badge/Java-21-orange)
+
+A light, simple, multi-engine Java decompiler GUI application built with Java 21 and Swing.
 
 ## Features
 
