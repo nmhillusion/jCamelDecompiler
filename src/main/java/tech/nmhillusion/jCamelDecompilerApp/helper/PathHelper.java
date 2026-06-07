@@ -1,16 +1,13 @@
 package tech.nmhillusion.jCamelDecompilerApp.helper;
 
 import tech.nmhillusion.jCamelDecompilerApp.constant.CommonNameConstant;
-import tech.nmhillusion.n2mix.util.StringUtil;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.Arrays; // Keep this import as it's now used for Arrays.copyOfRange
 
 import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 
@@ -22,14 +19,18 @@ import static tech.nmhillusion.n2mix.helper.log.LogHelper.getLogger;
 public abstract class PathHelper {
 
     public static Path getPathOfResource(String... resourceNames) {
-        try {
-            return Paths.get(StringUtil.trimWithNull(getPathOfAppHome()), resourceNames)
-                    .toAbsolutePath();
-        } catch (URISyntaxException e) {
-            getLogger(PathHelper.class).error("Cannot find resource: %s".formatted(Arrays.toString(resourceNames)));
-            getLogger(PathHelper.class).error(e);
-            throw new RuntimeException("Cannot find resource: %s".formatted(Arrays.toString(resourceNames)), e);
+        Path basePath = getPathOfAppHome();
+        Path relativePath;
+
+        if (resourceNames == null || resourceNames.length == 0) {
+            relativePath = Paths.get(""); // Represents an empty path
+        } else if (resourceNames.length == 1) {
+            relativePath = Paths.get(resourceNames[0]);
+        } else {
+            // Paths.get(String first, String... more) to join multiple segments
+            relativePath = Paths.get(resourceNames[0], Arrays.copyOfRange(resourceNames, 1, resourceNames.length));
         }
+        return basePath.resolve(relativePath).toAbsolutePath();
     }
 
     public static Path makeSureExistFilePath(Path filePath) throws IOException {
@@ -42,21 +43,31 @@ public abstract class PathHelper {
         return filePath;
     }
 
-    public static Path getPathOfAppHome() throws URISyntaxException {
+    public static Path getPathOfAppHome() {
         final String appHomeDir = System.getenv(CommonNameConstant.ENV__APP_HOME.getEName());
 
         getLogger(PathHelper.class)
-                .info("App Home = {}", appHomeDir);
+                .info("App Home (from ENV) = {}", appHomeDir);
 
         if (StringValidator.isBlank(appHomeDir)) {
-            final URI resourceUri = ClassLoader.getSystemResource(
-                    CommonNameConstant.FOLDER__LIBRARY.getEName()
-            ).toURI();
-            getLogger(PathHelper.class).info("resourceUri = {}", resourceUri);
+            getLogger(PathHelper.class).warn("Environment variable {} not set. Attempting to infer App Home.", CommonNameConstant.ENV__APP_HOME.getEName());
 
-            return Paths.get(resourceUri)
-                    .getParent()
-                    .toAbsolutePath();
+            Path currentWorkingDir = Paths.get(".").toAbsolutePath().normalize();
+            getLogger(PathHelper.class).info("Current Working Directory = {}", currentWorkingDir);
+
+            // Check if the current working directory's name is "bin" (case-insensitive)
+            // If so, assume the parent directory is the application home.
+            if (currentWorkingDir.getFileName() != null && "bin".equalsIgnoreCase(currentWorkingDir.getFileName().toString())) {
+                Path parentDir = currentWorkingDir.getParent();
+                if (parentDir != null) {
+                    getLogger(PathHelper.class).info("Current directory is 'bin'. Setting App Home to parent directory: {}", parentDir);
+                    return parentDir;
+                }
+            }
+
+            // If not in a 'bin' directory or parent is null, use the current working directory as App Home.
+            getLogger(PathHelper.class).info("Setting App Home to current working directory: {}", currentWorkingDir);
+            return currentWorkingDir;
         } else {
             return Paths.get(appHomeDir)
                     .toAbsolutePath();
