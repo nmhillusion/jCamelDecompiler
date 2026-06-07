@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "tech.nmhillusion.jCamelDecompilerApp"
-version = "2026.1.0"
+version = "2026.1.1"
 
 var appNameL = "jCamelDecompilerApp"
 var mainClassL = "tech.nmhillusion.jCamelDecompilerApp.Main"

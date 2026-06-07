@@ -221,6 +221,9 @@ public class DecompilerEngine {
                 , "Cleaning output folder"
         );
         this.deleteFolderRecursive(executionState.getOutputFolder());
+        if (!Files.exists(executionState.getOutputFolder())) {
+            Files.createDirectories(executionState.getOutputFolder());
+        }
 
         for (int fileIdx = 0; fileIdx < decompileFileCount; fileIdx++) {
             final long startDecompileTime = System.currentTimeMillis();
@@ -306,6 +309,10 @@ public class DecompilerEngine {
     }
 
     private void saveDecompiledFiles(List<DecompileFileModel> decompileFileList, Path outputFolder) throws IOException {
+        if (!Files.exists(outputFolder)) {
+            Files.createDirectories(outputFolder);
+        }
+
         final String outContent = decompileFileList
                 .stream()
                 .map(DecompileFileModel::getClassFilePath)
@@ -373,12 +380,20 @@ public class DecompilerEngine {
         final String javaFileName = String.valueOf(relativeItemPath.getFileName())
                 .replaceFirst("\\.class$", ".java");
 
-        return Paths.get(
-                String.valueOf(outputDirPath),
-                String.valueOf(
-                        relativeItemPath.getParent()
-                ),
-                javaFileName
-        );
+        final Path parentOfItem = relativeItemPath.getParent();
+        if (null != parentOfItem) {
+            return Paths.get(
+                    String.valueOf(outputDirPath),
+                    String.valueOf(
+                            parentOfItem
+                    ),
+                    javaFileName
+            );
+        } else {
+            return Paths.get(
+                    String.valueOf(outputDirPath),
+                    javaFileName
+            );
+        }
     }
 }
