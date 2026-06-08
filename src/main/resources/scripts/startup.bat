@@ -49,9 +49,13 @@ set "CURRENT_JAVA_EXE=%JAVA_CMD%"
 
 :: 7. CALL THE NEXT SCRIPT
 set "app_name=jCamelDecompilerApp"
+set "args=%*"
 if exist "%~dp0%app_name%.bat" (
-    echo [EXEC] Calling %~dp0%app_name%.bat ...
-    call "%~dp0%app_name%"
+    echo [EXEC] Calling "%~dp0%app_name%.bat" with arguments: "%args%"
+
+    :: Call the next script, passing all arguments received by this script
+    call "%~dp0%app_name%.bat" %*
+
     exit /b 0
 ) else (
     call :ShowError "[ERROR] %~dp0%app_name%.bat not found in %~dp0" "Error"
