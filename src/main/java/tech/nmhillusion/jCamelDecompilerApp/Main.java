@@ -2,10 +2,15 @@ package tech.nmhillusion.jCamelDecompilerApp;
 
 import tech.nmhillusion.jCamelDecompilerApp.execution.CliCommandExecution;
 import tech.nmhillusion.jCamelDecompilerApp.execution.GuiAppExecution;
+import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
+import tech.nmhillusion.n2mix.helper.YamlReader;
 import tech.nmhillusion.n2mix.helper.log.LogHelper;
 import tech.nmhillusion.n2mix.helper.log.MixLogger;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * created by: nmhillusion
@@ -28,6 +33,13 @@ public class Main {
 
             GuiAppExecution.execute();
             System.exit(0);
+        }
+    }
+
+    public static <T> T getAppInfoProperty(String configKey, Class<T> class2Cast) throws IOException {
+        final Path appInfoPath = PathHelper.getPathOfResource("config/app-info.yml");
+        try (final InputStream fis = Files.newInputStream(appInfoPath)) {
+            return new YamlReader(fis).getProperty(configKey, class2Cast);
         }
     }
 }

@@ -4,7 +4,6 @@ import tech.nmhillusion.jCamelDecompilerApp.Main;
 import tech.nmhillusion.jCamelDecompilerApp.constant.PathsConstant;
 import tech.nmhillusion.jCamelDecompilerApp.gui.frame.MainContentPane;
 import tech.nmhillusion.jCamelDecompilerApp.helper.PathHelper;
-import tech.nmhillusion.n2mix.helper.YamlReader;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
 import javax.imageio.ImageIO;
@@ -12,7 +11,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,20 +25,13 @@ final public class GuiAppExecution {
     private static String APP_DISPLAY_NAME = "jCamelDecompiler";
 
     private static void fillAppProperty() throws IOException {
-        final String appName = getAppInfoProperty("info.name", String.class);
-        final String appVersion = getAppInfoProperty("info.version", String.class);
+        final String appName = Main.getAppInfoProperty("info.name", String.class);
+        final String appVersion = Main.getAppInfoProperty("info.version", String.class);
 
         APP_DISPLAY_NAME = appName + (
                 StringValidator.isBlank(appVersion) ? "" : " v" + appVersion
         )
         ;
-    }
-
-    public static <T> T getAppInfoProperty(String configKey, Class<T> class2Cast) throws IOException {
-        final Path appInfoPath = PathHelper.getPathOfResource("config/app-info.yml");
-        try (final InputStream fis = Files.newInputStream(appInfoPath)) {
-            return new YamlReader(fis).getProperty(configKey, class2Cast);
-        }
     }
 
     private static void throwIfUnavailableRequiredPaths() {

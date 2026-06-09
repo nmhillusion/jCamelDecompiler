@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "tech.nmhillusion.jCamelDecompilerApp"
-version = "2026.1.1"
+version = "2026.2.0"
 
 var appNameL = "jCamelDecompilerApp"
 var mainClassL = "tech.nmhillusion.jCamelDecompilerApp.Main"
@@ -19,7 +19,7 @@ dependencies {
     // https://jitpack.io/#nmhillusion/n2mix-java
     implementation("com.github.nmhillusion:n2mix-java:2025.5.12")
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
-    implementation("org.yaml:snakeyaml:2.4")
+    implementation("org.yaml:snakeyaml:2.5")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
