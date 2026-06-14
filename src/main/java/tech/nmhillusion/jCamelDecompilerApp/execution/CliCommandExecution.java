@@ -53,12 +53,12 @@ final public class CliCommandExecution {
         }
 
         if (StringValidator.isBlank(inputPathStr)) {
-            logger.error("Missing required --input argument. Usage: java -jar jCamelDecompiler.jar --input <folder-or-file> --output <folder> [--engine <engine-id>]");
+            logger.error("Missing required --input argument. Usage: java -jar jCamelDecompiler.jar --input <folder> --output <folder> [--engine <engine-id>]");
             System.exit(1);
         }
 
         if (StringValidator.isBlank(outputPathStr)) {
-            logger.error("Missing required --output argument. Usage: java -jar jCamelDecompiler.jar --input <folder-or-file> --output <folder> [--engine <engine-id>]");
+            logger.error("Missing required --output argument. Usage: java -jar jCamelDecompiler.jar --input <folder> --output <folder> [--engine <engine-id>]");
             System.exit(1);
         }
 
@@ -76,7 +76,7 @@ final public class CliCommandExecution {
         if (Files.isDirectory(inputPath)) {
             classesFolderPath = inputPath;
         } else {
-            logger.error("Input must be a directory.");
+            logger.error("Input must be a directory. Received: " + inputPathStr);
             System.exit(1);
             return; // unreachable, but good practice
         }
@@ -126,9 +126,10 @@ final public class CliCommandExecution {
 
             @Override
             public void onDone(String notificationContent, DecompileResultModel decompileResult, long startDecompileTime) {
-                logger.info("Decompilation completed successfully. Message: {}, result: {}, time: {}ms"
+                logger.info("Decompilation completed. Message: {}, Success: {}, Failed: {}, Time: {}ms"
                         , notificationContent
-                        , decompileResult
+                        , decompileResult.getSuccessFiles().size()
+                        , decompileResult.getFailureFiles().size()
                         , System.currentTimeMillis() - startDecompileTime
                 );
             }
@@ -166,8 +167,8 @@ final public class CliCommandExecution {
             // Execute decompilation using DecompilerEngine
             logger.info("Executing decompilation...");
             final DecompilerEngine decompilerEngine = new DecompilerEngine(executionState);
-            decompilerEngine.execute(cliLogUpdatable, cliProgressStatusUpdatable);
-            logger.info("Decompilation completed successfully.");
+            DecompileResultModel result = decompilerEngine.execute(cliLogUpdatable, cliProgressStatusUpdatable);
+            logger.info("Decompilation process finished. Total success: {}, Total failed: {}", result.getSuccessFiles().size(), result.getFailureFiles().size());
         } catch (Throwable e) {
             logger.error("Decompilation failed: " + e.getMessage(), e);
             System.exit(1);
