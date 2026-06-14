@@ -32,7 +32,6 @@ public class Main {
             logger.info("GUI MODE");
 
             GuiAppExecution.execute();
-            System.exit(0);
         }
     }
 
