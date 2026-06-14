@@ -1,9 +1,16 @@
 package tech.nmhillusion.jCamelDecompilerApp.execution;
 
+import tech.nmhillusion.jCamelDecompilerApp.actionable.LogUpdatable;
+import tech.nmhillusion.jCamelDecompilerApp.actionable.ProgressStatusUpdatable;
+import tech.nmhillusion.jCamelDecompilerApp.constant.ExecutionStatus;
+import tech.nmhillusion.jCamelDecompilerApp.constant.LogType;
+import tech.nmhillusion.jCamelDecompilerApp.engine.DecompilerEngine;
 import tech.nmhillusion.jCamelDecompilerApp.loader.DecompilerLoader;
-import tech.nmhillusion.jCamelDecompilerApp.model.DecompileFileModel;
+import tech.nmhillusion.jCamelDecompilerApp.model.DecompileResultModel;
 import tech.nmhillusion.jCamelDecompilerApp.model.DecompilerEngineModel;
-import tech.nmhillusion.jCamelDecompilerApp.runtime.DecompilerExecutor;
+import tech.nmhillusion.jCamelDecompilerApp.state.ExecutionState;
+import tech.nmhillusion.n2mix.helper.log.LogHelper;
+import tech.nmhillusion.n2mix.helper.log.MixLogger;
 import tech.nmhillusion.n2mix.validator.StringValidator;
 
 import java.io.File;
@@ -11,9 +18,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * created by: nmhillusion
@@ -21,6 +25,7 @@ import java.util.stream.Stream;
  * created date: 2026-06-08
  */
 final public class CliCommandExecution {
+    private static final MixLogger logger = LogHelper.getLogger(CliCommandExecution.class);
 
     public static void executeCLICommand(String[] args) throws IOException {
         String inputPathStr = null;
@@ -48,78 +53,124 @@ final public class CliCommandExecution {
         }
 
         if (StringValidator.isBlank(inputPathStr)) {
-            System.err.println("Missing required --input argument. Usage: java -jar jCamelDecompiler.jar --input <folder-or-file> [--output <folder>] [--engine <engine-id>]");
+            logger.error("Missing required --input argument. Usage: java -jar jCamelDecompiler.jar --input <folder-or-file> --output <folder> [--engine <engine-id>]");
+            System.exit(1);
+        }
+
+        if (StringValidator.isBlank(outputPathStr)) {
+            logger.error("Missing required --output argument. Usage: java -jar jCamelDecompiler.jar --input <folder-or-file> --output <folder> [--engine <engine-id>]");
             System.exit(1);
         }
 
         final File inputFile = new File(inputPathStr);
         if (!inputFile.exists()) {
-            System.err.println("Input path does not exist: " + inputPathStr);
+            logger.error("Input path does not exist: " + inputPathStr);
             System.exit(1);
         }
 
-        // Load appropriate engine configuration
-        final DecompilerEngineModel engineModel = engineId != null ?
-                DecompilerLoader.getInstance().loadEngine(engineId) :
-                DecompilerLoader.getInstance().loadEngines().getFirst();
+        final Path inputPath = Paths.get(inputPathStr);
+        final Path outputPath = Paths.get(outputPathStr);
 
-        // Process input - if it's a folder, find all .class files
-        final List<Path> filesToProcess = new ArrayList<>();
-        final Path inputPath_ = Paths.get(inputPathStr);
-        if (inputFile.isDirectory()) {
-            // Walk the directory tree to find all .class files
-            try (Stream<Path> paths = Files.walk(inputPath_)) {
-                paths.filter(Files::isRegularFile)
-                        .filter(p -> p.toString().endsWith(".class"))
-                        .forEach(filesToProcess::add);
-            }
+        // Determine the base classes folder path for DecompilerEngine
+        final Path classesFolderPath;
+        if (Files.isDirectory(inputPath)) {
+            classesFolderPath = inputPath;
+        } else {
+            logger.error("Input must be a directory.");
+            System.exit(1);
+            return; // unreachable, but good practice
+        }
 
-            if (filesToProcess.isEmpty()) {
-                System.err.println("No .class files found in directory: " + inputPathStr);
+        // Set default engineId if not provided
+        if (StringValidator.isBlank(engineId)) {
+            try {
+                engineId = DecompilerLoader.getInstance().loadEngines().getFirst().getEngineId();
+            } catch (Exception e) {
+                logger.error("No decompiler engines found or failed to load default engine: " + e.getMessage());
                 System.exit(1);
             }
-        } else if (inputFile.isFile() && inputPathStr.endsWith(".class")) {
-            // Single class file
-            filesToProcess.add(inputPath_);
         } else {
-            System.err.println("Input file must be a .class file or directory containing .class files");
+            final DecompilerEngineModel decompilerEngineModel = DecompilerLoader.getInstance().loadEngine(engineId);
+            if (decompilerEngineModel == null) {
+                logger.error("Invalid decompiler engine ID: " + engineId);
+                System.exit(1);
+            }
+        }
+        logger.info("Using decompiler engine ID: {}", engineId);
+
+        // Create ExecutionState
+        final ExecutionState executionState = new ExecutionState()
+                .setClassesFolderPath(classesFolderPath)
+                .setOutputFolder(outputPath)
+                .setDecompilerEngineId(engineId)
+                .setIsOnlyFilteredFiles(false)
+                .setFilteredFilePath(null)
+                .setExecutionStatus(ExecutionStatus.PREPARE);
+
+        // Implement LogUpdatable for CLI
+        final LogUpdatable cliLogUpdatable = new LogUpdatable() {
+            @Override
+            public void onLogMessage(LogType logType, String logMessage) {
+                switch (logType) {
+                    case INFO -> logger.info(logMessage);
+                    case WARN -> logger.warn(logMessage);
+                    case ERROR -> logger.error(logMessage);
+                    case DEBUG -> logger.debug(logMessage);
+                }
+            }
+
+            @Override
+            public void onStartProgress() {
+                logger.info("Starting decompilation...");
+            }
+
+            @Override
+            public void onDone(String notificationContent, DecompileResultModel decompileResult, long startDecompileTime) {
+                logger.info("Decompilation completed successfully. Message: {}, result: {}, time: {}ms"
+                        , notificationContent
+                        , decompileResult
+                        , System.currentTimeMillis() - startDecompileTime
+                );
+            }
+
+            @Override
+            public void onClearLog() {
+                // No-op for CLI
+            }
+        };
+
+        // Implement ProgressStatusUpdatable for CLI
+        final ProgressStatusUpdatable cliProgressStatusUpdatable = new ProgressStatusUpdatable() {
+            @Override
+            public void onUpdateProgressValue(int newPercent, int currentCompletedCount, int totalCount) {
+                logger.info("Progress: {}% ({}/{})", newPercent, currentCompletedCount, totalCount);
+            }
+
+            @Override
+            public void resetProcessState() {
+                // No-op for CLI
+            }
+
+            @Override
+            public void startProgress() {
+                // No-op for CLI
+            }
+
+            @Override
+            public void cancelProgress() {
+                // No-op for CLI
+            }
+        };
+
+        try {
+            // Execute decompilation using DecompilerEngine
+            logger.info("Executing decompilation...");
+            final DecompilerEngine decompilerEngine = new DecompilerEngine(executionState);
+            decompilerEngine.execute(cliLogUpdatable, cliProgressStatusUpdatable);
+            logger.info("Decompilation completed successfully.");
+        } catch (Throwable e) {
+            logger.error("Decompilation failed: " + e.getMessage(), e);
             System.exit(1);
         }
-
-        // Ensure output directory exists if specified
-        Path outputPath = null;
-        if (outputPathStr != null) {
-            outputPath = Paths.get(outputPathStr);
-            Path outputDir = outputPath;
-            if (!Files.exists(outputDir)) {
-                Files.createDirectories(outputDir);
-            }
-        }
-
-        // Process each file
-        for (Path filePath : filesToProcess) {
-            try {
-                // Set up decompile target model
-                final DecompileFileModel model = new DecompileFileModel()
-                        .setClassFilePath(filePath);
-
-                // Set optional output path - if output directory specified,
-                // place decompiled file there with same name but .java extension
-                if (outputPath != null) {
-                    String fileName = filePath.getFileName().toString();
-                    String javaFileName = fileName.replaceFirst("\\.class$", ".java");
-                    Path outputFilePath = outputPath.resolve(javaFileName);
-                    model.setOutputFilePath(outputFilePath);
-                }
-
-                // Execute decompilation
-                final DecompilerExecutor executor = new DecompilerExecutor(engineModel);
-                executor.execScriptFile(model, System.out::println);
-            } catch (Throwable e) {
-                System.err.println("Failed to decompile " + filePath + ": " + e.getMessage());
-                // Continue with other files rather than failing completely
-            }
-        }
     }
-
 }
